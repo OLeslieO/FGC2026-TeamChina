@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,15 +10,15 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 public class FGC2026TeleopTest extends LinearOpMode {
 
     // Motors
-    public DcMotor lala = null;
+    public DcMotor laLa = null;
 
     public DcMotor preShooter = null;
     public DcMotor intake = null;
-    public DcMotor leftDrive = null;
-    public DcMotor rightDrive = null;
+    public DcMotor driveLeft = null;
+    public DcMotor driveRight = null;
 
-    public DcMotorEx shooter = null;
-    public DcMotorEx shooter1 = null;
+    public DcMotorEx shooterLeft = null;
+    public DcMotorEx shooterRight = null;
 
     // Limit Switch
     public DigitalChannel arm_down_limit;
@@ -31,32 +31,32 @@ public class FGC2026TeleopTest extends LinearOpMode {
     public void runOpMode() {
 
         // Hardware Mapping
-        lala = hardwareMap.get(DcMotor.class, "lala");
+        laLa = hardwareMap.get(DcMotor.class, "laLa");
 
         preShooter = hardwareMap.get(DcMotor.class, "preShooter");
         intake = hardwareMap.get(DcMotor.class, "intake");
-        leftDrive = hardwareMap.get(DcMotor.class, "leftDrive");
-        rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
+        driveLeft = hardwareMap.get(DcMotor.class, "driveLeft");
+        driveRight = hardwareMap.get(DcMotor.class, "driveRight");
 
-        shooter = hardwareMap.get(DcMotorEx.class, "shooterLeft");
-        shooter1 = hardwareMap.get(DcMotorEx.class, "shooterRight");
+        shooterLeft = hardwareMap.get(DcMotorEx.class, "shooterLeft");
+        shooterRight = hardwareMap.get(DcMotorEx.class, "shooterRight");
 
 
         // Motor Directions
-        lala.setDirection(DcMotor.Direction.FORWARD);
+        laLa.setDirection(DcMotor.Direction.FORWARD);
 
-        shooter.setDirection(DcMotor.Direction.FORWARD);
-        shooter1.setDirection(DcMotor.Direction.REVERSE);
+        shooterLeft.setDirection(DcMotor.Direction.FORWARD);
+        shooterRight.setDirection(DcMotor.Direction.REVERSE);
 
         intake.setDirection(DcMotor.Direction.REVERSE);
         preShooter.setDirection(DcMotor.Direction.REVERSE);
 
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        driveLeft.setDirection(DcMotor.Direction.REVERSE);
+        driveRight.setDirection(DcMotor.Direction.FORWARD);
 
         // Encoder Mode
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         telemetry.addLine("Robot Ready!");
         telemetry.update();
@@ -70,12 +70,12 @@ public class FGC2026TeleopTest extends LinearOpMode {
             // =========================
             double speedMultiplier;
             if(gamepad1.dpad_up){
-                lala.setPower(1);
+                laLa.setPower(1);
 
             }else if(gamepad1.dpad_down){
-                lala.setPower(-1);
+                laLa.setPower(-1);
             }else{
-                lala.setPower(0);
+                laLa.setPower(0);
             }
 
             if (gamepad1.left_bumper) {
@@ -115,21 +115,21 @@ public class FGC2026TeleopTest extends LinearOpMode {
             }
 
 
-            leftDrive.setPower(leftPower);
-            rightDrive.setPower(rightPower);
+            driveLeft.setPower(leftPower);
+            driveRight.setPower(rightPower);
 
             // =========================
             // Shooter
             // =========================
             if (gamepad1.a) {
-                shooter.setPower(1.0);
-                shooter1.setPower(1.0);
+                shooterLeft.setPower(1.0);
+                shooterRight.setPower(1.0);
             } else {
-                shooter.setPower(0);
-                shooter1.setPower(0);
+                shooterLeft.setPower(0);
+                shooterRight.setPower(0);
 
-                shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                shooter1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
 
             // =========================
@@ -157,11 +157,11 @@ public class FGC2026TeleopTest extends LinearOpMode {
             // =========================
             // Telemetry
             // =========================
-            telemetry.addData("Shooter Speed", "%.2f", shooter.getVelocity());
-            telemetry.addData("Shooter1 Speed", "%.2f", shooter1.getVelocity());
+            telemetry.addData("Shooter Speed", "%.2f", shooterLeft.getVelocity());
+            telemetry.addData("Shooter1 Speed", "%.2f", shooterRight.getVelocity());
 
-            telemetry.addData("Left Drive Power", "%.2f", leftDrive.getPower());
-            telemetry.addData("Right Drive Power", "%.2f", rightDrive.getPower());
+            telemetry.addData("Left Drive Power", "%.2f", driveLeft.getPower());
+            telemetry.addData("Right Drive Power", "%.2f", driveRight.getPower());
 
 
             telemetry.addData("gamepad1.b", gamepad1.b);
