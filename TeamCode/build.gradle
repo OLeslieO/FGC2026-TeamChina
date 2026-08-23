@@ -22,7 +22,14 @@ android {
         jniLibs.useLegacyPackaging true
     }
 }
-
+repositories {
+    maven {
+        url "https://repo.dairy.foundation/releases"
+    }
+}
 dependencies {
+    implementation "org.solverslib:core:0.3.4" // core
     implementation project(':FtcRobotController')
+    implementation 'dev.nextftc:ftc:1.1.0'
+    implementation 'dev.nextftc:hardware:1.1.0' // If you would like to use the hardware module
 }
