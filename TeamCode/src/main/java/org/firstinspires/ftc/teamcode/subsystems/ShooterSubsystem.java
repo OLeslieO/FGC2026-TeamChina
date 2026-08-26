@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-public class Shooter extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase {
     private final DcMotorEx shooterLeft, shooterRight, preShooter;
-    public Shooter(HardwareMap hardwareMap) {
+    public ShooterSubsystem(HardwareMap hardwareMap) {
         shooterLeft = hardwareMap.get(DcMotorEx.class, "shooterLeft");
         shooterRight = hardwareMap.get(DcMotorEx.class, "shooterRight");
         preShooter = hardwareMap.get(DcMotorEx.class, "preShooter");
@@ -33,6 +33,9 @@ public class Shooter extends SubsystemBase {
     }
     public void shoot(){
         preShooter.setPower(Constants.PRESHOOTER_SHOOT_POW.value);
+    }
+    public void stopShoot(){
+        preShooter.setPower(0);
     }
 
 }

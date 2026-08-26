@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-public class Ascent extends SubsystemBase {
+public class AscentSubsystem extends SubsystemBase {
     private final DcMotorEx ascentMotor;
-    public Ascent(HardwareMap hardwareMap) {
+    public AscentSubsystem(HardwareMap hardwareMap) {
         ascentMotor = hardwareMap.get(DcMotorEx.class, "AscentMotor");
         ascentMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         ascentMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
