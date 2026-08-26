@@ -53,7 +53,7 @@ public class TeleOpSolo extends CommandOpmodeEx {
         );
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
+        telemetry.clearAll();
         /* ---------- Schedule ---------- */
         CommandScheduler.getInstance().schedule(driveCommand);
 
@@ -94,11 +94,10 @@ public class TeleOpSolo extends CommandOpmodeEx {
 
     @Override
     public void run() {
-        telemetry.addData("shooterVelocity", shooterSubsystem.shooterLeft.getVelocity());
-
-
-
-
+        telemetry.addData("leftShooterVelocity", shooterSubsystem.shooterLeft.getVelocity());
+        telemetry.addData("rightShooterVelocity", shooterSubsystem.shooterRight.getVelocity());
+        telemetry.addData("preShooterVelocity", shooterSubsystem.preShooter.getVelocity());
+        telemetry.update();
         CommandScheduler.getInstance().run();
     }
 }
