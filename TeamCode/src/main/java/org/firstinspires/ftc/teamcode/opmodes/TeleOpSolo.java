@@ -6,7 +6,6 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import com.seattlesolvers.solverslib.gamepad.ToggleButtonReader;
-import com.seattlesolvers.solverslib.geometry.Vector2d;
 
 import org.firstinspires.ftc.teamcode.commands.DriveCommand;
 import org.firstinspires.ftc.teamcode.subsystems.AscentSubsystem;
@@ -23,9 +22,9 @@ public class TeleOpSolo extends CommandOpmodeEx {
 
     private DriveSubsystem driveSubsystem;
 
-    private ShooterSubsystem shooter;
+    private ShooterSubsystem shooterSubsystem;
     private IntakeSubsystem intakeSubsystem;
-    private AscentSubsystem ascent;
+    private AscentSubsystem ascentSubsystem;
 
 
 
@@ -42,18 +41,18 @@ public class TeleOpSolo extends CommandOpmodeEx {
 
         /* ---------- Subsystems ---------- */
         driveSubsystem = new DriveSubsystem(hardwareMap);
-        shooter = new ShooterSubsystem(hardwareMap);
+        shooterSubsystem = new ShooterSubsystem(hardwareMap);
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
-        ascent = new AscentSubsystem(hardwareMap);
+        ascentSubsystem = new AscentSubsystem(hardwareMap);
 
 
 
         /* ---------- Drive Command ---------- */
         DriveCommand driveCommand = new DriveCommand(
                 driveSubsystem,
-                () -> gamepadEx1.getLeftX(),
+                () -> gamepadEx1.getLeftY(),
                 () -> gamepadEx1.getRightX(),
-                () -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_BUMPER)
+                () -> gamepadEx1.getButton(GamepadKeys.Button.LEFT_BUMPER)
         );
 
 
@@ -70,25 +69,31 @@ public class TeleOpSolo extends CommandOpmodeEx {
     @Override
     public void onStart() {
         resetRuntime();
-        shooter.idle();
+        shooterSubsystem.idle();
     }
 
     @Override
     public void functionalButtons() {
         new ButtonEx(()-> gamepadEx1.getButton(GamepadKeys.Button.A))
-                .whenPressed(new InstantCommand(()->shooter.accelerate()))
-                .whenReleased(new InstantCommand(()->shooter.idle()));
+                .whenPressed(new InstantCommand(()-> shooterSubsystem.accelerate()))
+                .whenReleased(new InstantCommand(()-> shooterSubsystem.idle()));
 
 
         new ButtonEx(()->gamepadEx1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.5)
-                .whenPressed(new InstantCommand(()-> shooter.shoot()))
-                .whenReleased(new InstantCommand(()-> shooter.stopShoot()));
+                .whenPressed(new InstantCommand(()-> shooterSubsystem.shoot()))
+                .whenReleased(new InstantCommand(()-> shooterSubsystem.stopShoot()));
 
-        new ButtonEx(() ->
-                gamepadEx1.getButton(GamepadKeys.Button.RIGHT_BUMPER))
+        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_BUMPER))
                 .whenPressed(new InstantCommand(()->intakeSubsystem.intakePower(1)))
                 .whenReleased(new InstantCommand(()-> intakeSubsystem.intakePower(0)));
 
+        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP))
+                .whenPressed(new InstantCommand(()->ascentSubsystem.ascent()))
+                .whenReleased(new InstantCommand(()-> ascentSubsystem.stop()));
+
+        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN))
+                .whenPressed(new InstantCommand(()->ascentSubsystem.descent()))
+                .whenReleased(new InstantCommand(()-> ascentSubsystem.stop()));
 
     }
 
