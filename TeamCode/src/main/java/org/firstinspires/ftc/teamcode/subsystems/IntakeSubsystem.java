@@ -28,6 +28,4 @@ public class IntakeSubsystem extends SubsystemBase {
         intake.setPower(INTAKE_PWR);
     }
 
-
-
 }

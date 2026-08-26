@@ -7,7 +7,7 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 public class ShooterSubsystem extends SubsystemBase {
-    private final DcMotorEx shooterLeft, shooterRight, preShooter;
+    public final DcMotorEx shooterLeft, shooterRight, preShooter;
     public ShooterSubsystem(HardwareMap hardwareMap) {
         shooterLeft = hardwareMap.get(DcMotorEx.class, "shooterLeft");
         shooterRight = hardwareMap.get(DcMotorEx.class, "shooterRight");

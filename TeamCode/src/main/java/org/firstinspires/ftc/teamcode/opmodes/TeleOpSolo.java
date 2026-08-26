@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -19,13 +21,10 @@ import org.firstinspires.ftc.teamcode.utils.ButtonEx;
 public class TeleOpSolo extends CommandOpmodeEx {
 
     private GamepadEx gamepadEx1;
-
     private DriveSubsystem driveSubsystem;
-
     private ShooterSubsystem shooterSubsystem;
     private IntakeSubsystem intakeSubsystem;
     private AscentSubsystem ascentSubsystem;
-
 
 
     @Override
@@ -45,8 +44,6 @@ public class TeleOpSolo extends CommandOpmodeEx {
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
         ascentSubsystem = new AscentSubsystem(hardwareMap);
 
-
-
         /* ---------- Drive Command ---------- */
         DriveCommand driveCommand = new DriveCommand(
                 driveSubsystem,
@@ -55,7 +52,7 @@ public class TeleOpSolo extends CommandOpmodeEx {
                 () -> gamepadEx1.getButton(GamepadKeys.Button.LEFT_BUMPER)
         );
 
-
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         /* ---------- Schedule ---------- */
         CommandScheduler.getInstance().schedule(driveCommand);
@@ -78,8 +75,7 @@ public class TeleOpSolo extends CommandOpmodeEx {
                 .whenPressed(new InstantCommand(()-> shooterSubsystem.accelerate()))
                 .whenReleased(new InstantCommand(()-> shooterSubsystem.idle()));
 
-
-        new ButtonEx(()->gamepadEx1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.5)
+        new ButtonEx(()->gamepadEx1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.4)
                 .whenPressed(new InstantCommand(()-> shooterSubsystem.shoot()))
                 .whenReleased(new InstantCommand(()-> shooterSubsystem.stopShoot()));
 
@@ -94,16 +90,15 @@ public class TeleOpSolo extends CommandOpmodeEx {
         new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN))
                 .whenPressed(new InstantCommand(()->ascentSubsystem.descent()))
                 .whenReleased(new InstantCommand(()-> ascentSubsystem.stop()));
-
     }
 
     @Override
     public void run() {
+        telemetry.addData("shooterVelocity", shooterSubsystem.shooterLeft.getVelocity());
+
 
 
 
         CommandScheduler.getInstance().run();
-
-
     }
 }

@@ -50,7 +50,7 @@ public void move(double forward, double turn, boolean isSlowMode) {
         rightPower /= maxPower;
     }
 
-    double speedMultiplier = isSlowMode ? 0.4 : 1.0;
+    double speedMultiplier = isSlowMode ? 0.3 : 1.0;
     leftPower *= speedMultiplier;
     rightPower *= speedMultiplier;
 
