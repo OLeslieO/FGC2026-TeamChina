@@ -15,7 +15,9 @@ public class DriveCommand extends CommandBase {
     private final DoubleSupplier speedMultiplier;
 
     public DriveCommand(DriveSubsystem subsystem,
-                        DoubleSupplier forward, DoubleSupplier turn, DoubleSupplier speedMultiplier) {
+                        DoubleSupplier forward,
+                        DoubleSupplier turn,
+                        DoubleSupplier speedMultiplier) {
         driveSubsystem = subsystem;
         this.forward = forward;
         this.turn = turn;
@@ -30,6 +32,10 @@ public class DriveCommand extends CommandBase {
                 turn.getAsDouble(),
                 speedMultiplier.getAsDouble()
         );
+    }
+    @Override
+    public void end(boolean interrupted) {
+        driveSubsystem.stop();
     }
 
 }
