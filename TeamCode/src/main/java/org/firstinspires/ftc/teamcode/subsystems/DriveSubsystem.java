@@ -8,7 +8,6 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 public class DriveSubsystem extends SubsystemBase {
     private final DcMotorEx leftDrive, rightDrive;
-    public double speedMultiplier;
 
     public DriveSubsystem(HardwareMap hardwareMap) {
         leftDrive = hardwareMap.get(DcMotorEx.class, "leftDrive");
@@ -51,6 +50,7 @@ public void move(double forward, double turn, boolean isSlowMode) {
         rightPower /= maxPower;
     }
 
+    double speedMultiplier = isSlowMode ? 0.4 : 1.0;
     leftPower *= speedMultiplier;
     rightPower *= speedMultiplier;
 

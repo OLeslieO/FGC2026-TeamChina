@@ -28,16 +28,12 @@ public class DriveCommand extends CommandBase {
 
     @Override
     public void execute() {
+        boolean slowMode = isSlowMode.getAsBoolean();
         driveSubsystem.move(
                 forward.getAsDouble(),
                 turn.getAsDouble(),
-                isSlowMode.getAsBoolean()
+                slowMode
         );
-        if (isSlowMode.getAsBoolean()){
-            driveSubsystem.speedMultiplier = 0.4;
-        } else {
-            driveSubsystem.speedMultiplier = 1;
-        }
     }
     @Override
     public void end(boolean interrupted) {
