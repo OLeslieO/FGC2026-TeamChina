@@ -47,7 +47,7 @@ public class TeleOpSolo extends CommandOpmodeEx {
         /* ---------- Drive Command ---------- */
         DriveCommand driveCommand = new DriveCommand(
                 driveSubsystem,
-                () -> gamepadEx1.getLeftY(),
+                () -> -gamepadEx1.getLeftY(),
                 () -> gamepadEx1.getRightX(),
                 () -> gamepadEx1.getButton(GamepadKeys.Button.LEFT_BUMPER)
         );

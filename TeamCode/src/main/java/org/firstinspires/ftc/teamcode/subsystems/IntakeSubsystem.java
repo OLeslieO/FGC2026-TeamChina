@@ -17,9 +17,6 @@ public class IntakeSubsystem extends SubsystemBase {
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-//    public void intake() {
-//        intake.setPower(1);
-//    }
     public void init(){
         intake.setPower(0);
     }

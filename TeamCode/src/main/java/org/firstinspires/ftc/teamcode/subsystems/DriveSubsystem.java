@@ -20,17 +20,6 @@ public class DriveSubsystem extends SubsystemBase {
         rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-//    public void move(double forward, double turn, double speedMultiplier) {
-//        double leftPower = (forward + turn) * speedMultiplier;
-//        double rightPower = (forward - turn) * speedMultiplier;
-//        double max = Math.max(Math.abs(leftPower), Math.abs(rightPower));
-//        if(max > 1.0){
-//            leftPower /= max;
-//            rightPower /= max;
-//        }
-//        leftDrive.setPower(leftPower);
-//        rightDrive.setPower(rightPower);
-//    }
 public void setPower(double leftPower, double rightPower) {
     leftDrive.setPower(clamp(leftPower));
     rightDrive.setPower(clamp(rightPower));
