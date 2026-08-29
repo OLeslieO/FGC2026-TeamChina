@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class AscentSubsystem extends SubsystemBase {
     private final DcMotorEx ascentMotor;
     public AscentSubsystem(HardwareMap hardwareMap) {
-        ascentMotor = hardwareMap.get(DcMotorEx.class, "AscentMotor");
+        ascentMotor = hardwareMap.get(DcMotorEx.class, "ascentMotor");
         ascentMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         ascentMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }

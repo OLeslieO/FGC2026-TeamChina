@@ -10,8 +10,8 @@ public class DriveSubsystem extends SubsystemBase {
     private final DcMotorEx leftDrive, rightDrive;
 
     public DriveSubsystem(HardwareMap hardwareMap) {
-        leftDrive = hardwareMap.get(DcMotorEx.class, "leftDrive");
-        rightDrive = hardwareMap.get(DcMotorEx.class, "rightDrive");
+        leftDrive = hardwareMap.get(DcMotorEx.class, "driveLeft");
+        rightDrive = hardwareMap.get(DcMotorEx.class, "driveRight");
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         rightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
