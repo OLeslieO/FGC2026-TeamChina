@@ -13,7 +13,7 @@ dependencies {
     implementation 'org.firstinspires.ftc:Hardware:11.2.1'
     implementation 'org.firstinspires.ftc:FtcCommon:11.2.1'
     implementation 'org.firstinspires.ftc:Vision:11.2.1'
-    implementation 'androidx.appcompat:appcompat:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.6.0'//FTC Dashboard
 }
 

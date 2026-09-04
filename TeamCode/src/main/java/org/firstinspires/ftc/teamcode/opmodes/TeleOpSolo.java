@@ -90,6 +90,9 @@ public class TeleOpSolo extends CommandOpmodeEx {
         new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN))
                 .whenPressed(new InstantCommand(()->ascentSubsystem.descent()))
                 .whenReleased(new InstantCommand(()-> ascentSubsystem.stop()));
+        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.B))
+                .whenPressed(new InstantCommand(()->ascentSubsystem.servoOff()))
+                .whenReleased(new InstantCommand(()-> ascentSubsystem.servoOn()));
     }
 
     @Override
