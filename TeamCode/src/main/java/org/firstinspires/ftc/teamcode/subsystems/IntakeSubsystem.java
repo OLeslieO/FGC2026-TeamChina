@@ -7,12 +7,11 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 public class IntakeSubsystem extends SubsystemBase {
-    private final DcMotorEx intake;
-    private static double INTAKE_PWR = 1;        // 吸球功率（向内）
-
+    private final DcMotorEx intake, laLa;
 
     public IntakeSubsystem(HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
+        laLa = hardwareMap.get(DcMotorEx.class, "laLa");
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
@@ -20,9 +19,13 @@ public class IntakeSubsystem extends SubsystemBase {
     public void init(){
         intake.setPower(0);
     }
+
     public void intakePower(double power) {
-        INTAKE_PWR = power;
-        intake.setPower(INTAKE_PWR);
+        intake.setPower(power);
     }
 
+
+    public void laLaPower(double power) {
+        laLa.setPower(power);
+    }
 }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -20,31 +22,46 @@ public class DriveSubsystem extends SubsystemBase {
         rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-public void setPower(double leftPower, double rightPower) {
-    leftDrive.setPower(clamp(leftPower));
-    rightDrive.setPower(clamp(rightPower));
-}
-public void move(double forward, double turn, boolean isSlowMode) {
-    double leftPower = forward + turn;
-    double rightPower = forward - turn;
-
-    double maxPower = Math.max(
-            Math.abs(leftPower),
-            Math.abs(rightPower)
-    );
-
-    // 防止 forward + turn 超过 [-1, 1]
-    if (maxPower > 1.0) {
-        leftPower /= maxPower;
-        rightPower /= maxPower;
+    public void setPower(double leftPower, double rightPower) {
+        leftDrive.setPower(clamp(leftPower));
+        rightDrive.setPower(clamp(rightPower));
     }
 
-    double speedMultiplier = isSlowMode ? 0.3 : 1.0;
-    leftPower *= speedMultiplier;
-    rightPower *= speedMultiplier;
+    public void setPower(@NonNull double[] powers) {
+        validatePotentials(powers);
+        setPower(powers[0], powers[1]);
+    }
 
-    setPower(leftPower, rightPower);
-}
+    public double[] calculateTankComponents(double leftInput, double rightInput, double speedCoefficient) {
+        return new double[]{
+                clamp(leftInput) * speedCoefficient,
+                clamp(rightInput) * speedCoefficient
+        };
+    }
+
+    public double[] calculateArcadeComponents(double forward, double turn, double speedCoefficient) {
+        double leftPower = forward + turn;
+        double rightPower = forward - turn;
+
+        double maxPower = Math.max(
+                Math.abs(leftPower),
+                Math.abs(rightPower)
+        );
+
+        if (maxPower > 1.0) {
+            leftPower /= maxPower;
+            rightPower /= maxPower;
+        }
+
+        return new double[]{
+                clamp(leftPower) * speedCoefficient,
+                clamp(rightPower) * speedCoefficient
+        };
+    }
+
+    public void move(double forward, double turn, double speedMultiplier) {
+        setPower(calculateArcadeComponents(forward, turn, speedMultiplier));
+    }
 
     private static double clamp(double value) {
         return Math.max(-1.0, Math.min(1.0, value));
@@ -53,5 +70,9 @@ public void move(double forward, double turn, boolean isSlowMode) {
         setPower(0.0, 0.0);
     }
 
-
+    private static void validatePotentials(@NonNull double[] potentials) {
+        if (potentials.length != 2) {
+            throw new IllegalArgumentException("Tank drive requires exactly two motor values.");
+        }
+    }
 }
