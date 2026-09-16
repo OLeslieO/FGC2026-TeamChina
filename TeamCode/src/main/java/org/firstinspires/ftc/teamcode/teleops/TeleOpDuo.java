@@ -85,13 +85,13 @@ public class TeleOpDuo extends CommandOpmodeEx {
                 .whenPressed(new InstantCommand(() -> intakeSubsystem.intakePower(getIntakePower())))
                 .whenReleased(new InstantCommand(() -> intakeSubsystem.intakePower(0)));
 
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP))
-                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(getTransferPower())))
-                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
-
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN))
-                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(-getTransferPower())))
-                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
+//        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP))
+//                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(getTransferPower())))
+//                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
+//
+//        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN))
+//                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(-getTransferPower())))
+//                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
 
         new ButtonEx(() -> gamepadEx2.getLeftY() > 0.5)
                 .whenPressed(new InstantCommand(() -> intakeSubsystem.laLaPower(getLaLaPower())))

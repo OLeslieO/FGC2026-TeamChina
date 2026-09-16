@@ -83,13 +83,13 @@ public class TeleOpSolo extends CommandOpmodeEx {
                 .whenPressed(new InstantCommand(() -> intakeSubsystem.intakePower(getIntakePower())))
                 .whenReleased(new InstantCommand(() -> intakeSubsystem.intakePower(0)));
 
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP))
-                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(getTransferPower())))
-                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
-
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN))
-                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(-getTransferPower())))
-                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
+//        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP))
+//                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(getTransferPower())))
+//                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
+//
+//        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN))
+//                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(-getTransferPower())))
+//                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
 
         new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_LEFT))
                 .whenPressed(new InstantCommand(() -> intakeSubsystem.laLaPower(getLaLaPower())))
