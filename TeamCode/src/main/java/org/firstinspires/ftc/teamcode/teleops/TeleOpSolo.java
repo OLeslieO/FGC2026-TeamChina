@@ -7,7 +7,6 @@ import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
-import com.seattlesolvers.solverslib.gamepad.ToggleButtonReader;
 
 import org.firstinspires.ftc.teamcode.ButtonEx;
 import org.firstinspires.ftc.teamcode.commands.DriveCommand;
@@ -22,6 +21,7 @@ import org.firstinspires.ftc.teamcode.utils.CommandOpmodeEx;
 public class TeleOpSolo extends CommandOpmodeEx {
 
     protected GamepadEx gamepadEx1;
+    protected GamepadEx gamepadEx2;
     protected DriveSubsystem driveSubsystem;
     protected ShooterSubsystem shooterSubsystem;
     protected IntakeSubsystem intakeSubsystem;
@@ -32,11 +32,7 @@ public class TeleOpSolo extends CommandOpmodeEx {
 
         CommandScheduler.getInstance().cancelAll();
 
-
-        gamepadEx1 = new GamepadEx(gamepad1);
-        ToggleButtonReader toggleLeftBumperReader = new ToggleButtonReader(
-                gamepadEx1, GamepadKeys.Button.LEFT_BUMPER
-        );
+        initializeGamepads();
 
         /* ---------- Subsystems ---------- */
         driveSubsystem = new DriveSubsystem(hardwareMap);
@@ -48,9 +44,7 @@ public class TeleOpSolo extends CommandOpmodeEx {
                 driveSubsystem,
                 () -> -gamepadEx1.getLeftY(),
                 () -> gamepadEx1.getRightX(),
-                () -> gamepadEx1.getButton(GamepadKeys.Button.LEFT_BUMPER)
-                        ? getDriveSlowMultiplier()
-                        : getDriveFastMultiplier()
+                this::getDriveSpeedMultiplier
         );
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -75,29 +69,33 @@ public class TeleOpSolo extends CommandOpmodeEx {
                 .whenPressed(new InstantCommand(() -> shooterSubsystem.accelerate(getShooterShootPower())))
                 .whenReleased(new InstantCommand(() -> shooterSubsystem.stopShooter()));
 
-        new ButtonEx(() -> gamepadEx1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.4)
-                .whenPressed(new InstantCommand(() -> shooterSubsystem.shoot(getTransferPower())))
+        new ButtonEx(() -> gamepadEx1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.4)
+                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransWithBlendVel(getTransferVel())))
                 .whenReleased(new InstantCommand(() -> shooterSubsystem.stopShoot()));
 
         new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_BUMPER))
-                .whenPressed(new InstantCommand(() -> intakeSubsystem.intakePower(getIntakePower())))
-                .whenReleased(new InstantCommand(() -> intakeSubsystem.intakePower(0)));
+                .whenPressed(new InstantCommand(() -> intakeSubsystem.setIntakePower(getIntakePower())))
+                .whenReleased(new InstantCommand(() -> intakeSubsystem.setIntakePower(0)));
 
-//        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP))
-//                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(getTransferPower())))
-//                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
-//
-//        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN))
-//                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(-getTransferPower())))
-//                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
+        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP))
+                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(getTransferPower())))
+                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
+
+        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN))
+                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(-getTransferPower())))
+                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
 
         new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_LEFT))
-                .whenPressed(new InstantCommand(() -> intakeSubsystem.laLaPower(getLaLaPower())))
-                .whenReleased(new InstantCommand(() -> intakeSubsystem.laLaPower(0)));
+                .whenPressed(new InstantCommand(() -> intakeSubsystem.setRetractPower(getRetractPower())))
+                .whenReleased(new InstantCommand(() -> intakeSubsystem.setRetractPower(0)));
 
         new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_RIGHT))
-                .whenPressed(new InstantCommand(() -> intakeSubsystem.laLaPower(-getLaLaPower())))
-                .whenReleased(new InstantCommand(() -> intakeSubsystem.laLaPower(0)));
+                .whenPressed(new InstantCommand(() -> intakeSubsystem.setRetractPower(-getRetractPower())))
+                .whenReleased(new InstantCommand(() -> intakeSubsystem.setRetractPower(0)));
+    }
+
+    protected void initializeGamepads() {
+        gamepadEx1 = new GamepadEx(gamepad1);
     }
 
     @Override
@@ -123,6 +121,14 @@ public class TeleOpSolo extends CommandOpmodeEx {
         return Constants.SHOOTER_IDLE_POW.value;
     }
 
+    protected double getShooterTargetVel() {
+        return Constants.SHOOTER_TARGET_VEL.value;
+    }
+
+    protected double getTransferVel() {
+        return Constants.TRANSFER_VEL.value;
+    }
+
     protected double getTransferPower() {
         return Constants.TRANSFER_POW.value;
     }
@@ -131,15 +137,11 @@ public class TeleOpSolo extends CommandOpmodeEx {
         return Constants.INTAKE_PWR.value;
     }
 
-    protected double getLaLaPower() {
-        return Constants.LALA_PWR.value;
+    protected double getRetractPower() {
+        return Constants.RETRACT_PWR.value;
     }
 
-    protected double getDriveFastMultiplier() {
-        return Constants.DRIVE_FAST_MULTIPLIER.value;
-    }
-
-    protected double getDriveSlowMultiplier() {
-        return Constants.DRIVE_SLOW_MULTIPLIER.value;
+    protected double getDriveSpeedMultiplier() {
+        return Constants.DRIVE_SPEED_MULTIPLIER.value;
     }
 }

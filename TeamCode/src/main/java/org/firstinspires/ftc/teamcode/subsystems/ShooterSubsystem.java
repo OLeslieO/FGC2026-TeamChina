@@ -60,12 +60,12 @@ public class ShooterSubsystem extends SubsystemBase {
         ascentMotor.setVelocity(velocity);
     }
 
-    public void shoot(double power){
+    public void setTransWithBlendPower(double power){
         setTransferPower(power);
         blender.setPosition(1);
     }
 
-    public void shootVelocity(double velocity) {
+    public void setTransWithBlendVel(double velocity) {
         setTransferVelocity(velocity);
         blender.setPosition(1);
     }

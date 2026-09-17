@@ -11,11 +11,11 @@ import org.firstinspires.ftc.teamcode.subsystems.Constants;
 public class ConfigTeleOpTest extends TeleOpSolo {
     public static double shooterShootPower = Constants.SHOOTER_SHOOT_POW.value;
     public static double shooterIdlePower = Constants.SHOOTER_IDLE_POW.value;
-    public static double preShooterPower = Constants.TRANSFER_POW.value;
+    public static double transferVel = Constants.TRANSFER_VEL.value;
+    public static double transferPower = Constants.TRANSFER_POW.value;
     public static double intakePower = Constants.INTAKE_PWR.value;
-    public static double laLaPower = Constants.LALA_PWR.value;
-    public static double driveFastMultiplier = Constants.DRIVE_FAST_MULTIPLIER.value;
-    public static double driveSlowMultiplier = Constants.DRIVE_SLOW_MULTIPLIER.value;
+    public static double laLaPower = Constants.RETRACT_PWR.value;
+    public static double driveSpeedMultiplier = Constants.DRIVE_SPEED_MULTIPLIER.value;
 
     @Override
     public void run() {
@@ -35,8 +35,12 @@ public class ConfigTeleOpTest extends TeleOpSolo {
     }
 
     @Override
+    protected double getTransferVel() {
+        return transferVel;
+    }
+    @Override
     protected double getTransferPower() {
-        return preShooterPower;
+        return transferPower;
     }
 
     @Override
@@ -45,18 +49,13 @@ public class ConfigTeleOpTest extends TeleOpSolo {
     }
 
     @Override
-    protected double getLaLaPower() {
+    protected double getRetractPower() {
         return laLaPower;
     }
 
     @Override
-    protected double getDriveFastMultiplier() {
-        return driveFastMultiplier;
-    }
-
-    @Override
-    protected double getDriveSlowMultiplier() {
-        return driveSlowMultiplier;
+    protected double getDriveSpeedMultiplier() {
+        return driveSpeedMultiplier;
     }
 
     @Override
@@ -68,10 +67,9 @@ public class ConfigTeleOpTest extends TeleOpSolo {
         telemetry.addData("ascentPower", shooterSubsystem.ascentMotor.getPower());
         telemetry.addData("configShooterShootPower", shooterShootPower);
         telemetry.addData("configShooterIdlePower", shooterIdlePower);
-        telemetry.addData("configPreShooterPower", preShooterPower);
+        telemetry.addData("configPreShooterPower", transferPower);
         telemetry.addData("configIntakePower", intakePower);
         telemetry.addData("configLaLaPower", laLaPower);
-        telemetry.addData("configDriveFastMultiplier", driveFastMultiplier);
-        telemetry.addData("configDriveSlowMultiplier", driveSlowMultiplier);
+        telemetry.addData("configDriveSpeedMultiplier", driveSpeedMultiplier);
     }
 }
