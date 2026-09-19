@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
@@ -56,5 +57,12 @@ public class TeleOpDuo extends TeleOpSolo {
                     gamepad1.rumble(3000);
                     gamepad2.rumble(3000);
                 });
+    }
+    @Override
+    public void run() {
+        telemetry.addData("Loop Times", elapsedtime.milliseconds());
+        telemetry.update();
+        elapsedtime.reset();
+        CommandScheduler.getInstance().run();
     }
 }

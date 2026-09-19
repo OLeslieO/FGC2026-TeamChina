@@ -11,6 +11,10 @@ import org.firstinspires.ftc.teamcode.subsystems.Constants;
 public class ConfigTeleOpTest extends TeleOpSolo {
     public static double shooterShootPower = Constants.SHOOTER_SHOOT_POW.value;
     public static double shooterIdlePower = Constants.SHOOTER_IDLE_POW.value;
+    public static double shooterP = Constants.SHOOTER_PIDF_P.value;
+    public static double shooterI = Constants.SHOOTER_PIDF_I.value;
+    public static double shooterD = Constants.SHOOTER_PIDF_D.value;
+    public static double shooterF = Constants.SHOOTER_PIDF_F.value;
     public static double transferVel = Constants.TRANSFER_VEL.value;
     public static double transferPower = Constants.TRANSFER_POW.value;
     public static double intakePower = Constants.INTAKE_PWR.value;
@@ -19,6 +23,7 @@ public class ConfigTeleOpTest extends TeleOpSolo {
 
     @Override
     public void run() {
+        shooterSubsystem.setShooterPIDF(shooterP, shooterI, shooterD, shooterF);
         addTelemetry();
         telemetry.update();
         CommandScheduler.getInstance().run();
@@ -67,6 +72,8 @@ public class ConfigTeleOpTest extends TeleOpSolo {
         telemetry.addData("ascentPower", shooterSubsystem.ascentMotor.getPower());
         telemetry.addData("configShooterShootPower", shooterShootPower);
         telemetry.addData("configShooterIdlePower", shooterIdlePower);
+        telemetry.addData("configShooterPIDF", "P %.3f I %.3f D %.3f F %.3f",
+                shooterP, shooterI, shooterD, shooterF);
         telemetry.addData("configPreShooterPower", transferPower);
         telemetry.addData("configIntakePower", intakePower);
         telemetry.addData("configLaLaPower", laLaPower);

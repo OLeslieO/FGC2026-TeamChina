@@ -16,14 +16,24 @@ public class ShooterSubsystem extends SubsystemBase {
         preShooter = hardwareMap.get(DcMotorEx.class, "preShooter");
         ascentMotor = hardwareMap.get(DcMotorEx.class, "ascentMotor");
         blender = hardwareMap.get(Servo.class, "blender");
-        shooterLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        shooterRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        preShooter.setDirection(DcMotorSimple.Direction.REVERSE);
-        ascentMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        shooterLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        shooterRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        preShooter.setDirection(DcMotorSimple.Direction.FORWARD);
+        ascentMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         preShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         ascentMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         preShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ascentMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setShooterPIDF(
+                Constants.SHOOTER_PIDF_P.value,
+                Constants.SHOOTER_PIDF_I.value,
+                Constants.SHOOTER_PIDF_D.value,
+                Constants.SHOOTER_PIDF_F.value
+        );
     }
 
     public void accelerate(double power) {
@@ -48,6 +58,11 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setShooterVelocity(double leftVelocity, double rightVelocity) {
         shooterLeft.setVelocity(leftVelocity);
         shooterRight.setVelocity(rightVelocity);
+    }
+
+    public void setShooterPIDF(double p, double i, double d, double f) {
+        shooterLeft.setVelocityPIDFCoefficients(p, i, d, f);
+        shooterRight.setVelocityPIDFCoefficients(p, i, d, f);
     }
 
     public void setTransferPower(double power) {

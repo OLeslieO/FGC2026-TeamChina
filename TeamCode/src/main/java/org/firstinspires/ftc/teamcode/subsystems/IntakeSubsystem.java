@@ -12,9 +12,10 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem(HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         retract = hardwareMap.get(DcMotorEx.class, "laLa");
-        intake.setDirection(DcMotorSimple.Direction.FORWARD);
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         retract.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        retract.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void init(){
