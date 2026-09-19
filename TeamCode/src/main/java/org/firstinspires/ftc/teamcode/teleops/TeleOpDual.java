@@ -24,9 +24,16 @@ public class TeleOpDual extends TeleOpSolo {
             shooterSubsystem.stopShooter();
         }
 
-        // Gamepad 1 - Right Trigger > 0.4
+        /* Gamepad 1 - Right Trigger > 0.4
+         * Gamepad 1 - D-Pad Up
+         * Gamepad 1 - D-Pad Down
+         */
         if (gamepadEx1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.4) {
             shooterSubsystem.setTransWithBlendVel(getTransferVel());
+        } else if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP)) {
+            shooterSubsystem.setTransferPower(getTransferPower());
+        } else if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
+            shooterSubsystem.setTransferPower(-getTransferPower());
         } else {
             shooterSubsystem.stopShoot();
         }
@@ -47,22 +54,6 @@ public class TeleOpDual extends TeleOpSolo {
             intakeSubsystem.setIntakePower(0);
         }
 
-        // Gamepad 1 - D-Pad Up
-        if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP)) {
-            shooterSubsystem.setTransferPower(getTransferPower());
-        }
-
-        // Gamepad 1 - D-Pad Down
-        if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
-            shooterSubsystem.setTransferPower(-getTransferPower());
-        }
-
-        // Stop transfer when neither D-Pad button is pressed
-        if (!gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP)
-                && !gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
-            shooterSubsystem.stopTransfer();
-        }
-
         // Gamepad 2 - Left Stick Y > 0.5
         if (gamepadEx2.getLeftY() > 0.5) {
             intakeSubsystem.setRetractPower(getRetractPower());
@@ -75,8 +66,8 @@ public class TeleOpDual extends TeleOpSolo {
         // Shooter ready -> rumble
         if (shooterSubsystem.shooterLeft.getVelocity() > getShooterTargetVel()
                 || shooterSubsystem.shooterRight.getVelocity() > getShooterTargetVel()) {
-            gamepad1.rumble(3000);
-            gamepad2.rumble(3000);
+            gamepad1.rumble(3);
+            gamepad2.rumble(3);
         }
     }
 
@@ -89,4 +80,3 @@ public class TeleOpDual extends TeleOpSolo {
         CommandScheduler.getInstance().run();
     }
 }
-
