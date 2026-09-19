@@ -4,16 +4,18 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
-import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
-import org.firstinspires.ftc.teamcode.ButtonEx;
 import org.firstinspires.ftc.teamcode.commands.DriveCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem.ExtensionState;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem.IntakeState;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.ShooterState;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.TransferState;
 import org.firstinspires.ftc.teamcode.utils.CommandOpmodeEx;
 
 
@@ -65,33 +67,35 @@ public class TeleOpSolo extends CommandOpmodeEx {
 
     @Override
     public void functionalButtons() {
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.A))
-                .whenPressed(new InstantCommand(() -> shooterSubsystem.accelerate(getShooterShootPower())))
-                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopShooter()));
+        shooterSubsystem.setShooterState(
+                gamepadEx1.getButton(GamepadKeys.Button.A)
+                        ? ShooterState.SHOOTING
+                        : ShooterState.STOPPED
+        );
 
-        new ButtonEx(() -> gamepadEx1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.4)
-                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransWithBlendVel(getTransferVel())))
-                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopShoot()));
+        if (gamepadEx1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.4) {
+            shooterSubsystem.setTransferState(TransferState.FEEDING);
+        } else if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP)) {
+            shooterSubsystem.setTransferState(TransferState.ASCENDING);
+        } else if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
+            shooterSubsystem.setTransferState(TransferState.DESCENDING);
+        } else {
+            shooterSubsystem.setTransferState(TransferState.STOPPED);
+        }
 
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_BUMPER))
-                .whenPressed(new InstantCommand(() -> intakeSubsystem.setIntakePower(getIntakePower())))
-                .whenReleased(new InstantCommand(() -> intakeSubsystem.setIntakePower(0)));
+        intakeSubsystem.setIntakeState(
+                gamepadEx1.getButton(GamepadKeys.Button.RIGHT_BUMPER)
+                        ? IntakeState.INTAKING
+                        : IntakeState.STOPPED
+        );
 
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP))
-                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(getTransferPower())))
-                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
-
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN))
-                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(-getTransferPower())))
-                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
-
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_LEFT))
-                .whenPressed(new InstantCommand(() -> intakeSubsystem.setRetractPower(getRetractPower())))
-                .whenReleased(new InstantCommand(() -> intakeSubsystem.setRetractPower(0)));
-
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_RIGHT))
-                .whenPressed(new InstantCommand(() -> intakeSubsystem.setRetractPower(-getRetractPower())))
-                .whenReleased(new InstantCommand(() -> intakeSubsystem.setRetractPower(0)));
+        if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_LEFT)) {
+            intakeSubsystem.setExtensionState(ExtensionState.EXTENDING);
+        } else if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_RIGHT)) {
+            intakeSubsystem.setExtensionState(ExtensionState.RETRACTING);
+        } else {
+            intakeSubsystem.setExtensionState(ExtensionState.STOPPED);
+        }
     }
 
     protected void initializeGamepads() {
@@ -107,38 +111,14 @@ public class TeleOpSolo extends CommandOpmodeEx {
 
     protected void addTelemetry() {
         telemetry.addLine("---");
-        telemetry.addData("leftShooterVelocity", shooterSubsystem.shooterLeft.getVelocity());
-        telemetry.addData("rightShooterVelocity", shooterSubsystem.shooterRight.getVelocity());
-        telemetry.addData("preShooterVelocity", shooterSubsystem.preShooter.getVelocity());
-        telemetry.addData("ascentVelocity", shooterSubsystem.ascentMotor.getVelocity());
-    }
-
-    protected double getShooterShootPower() {
-        return Constants.SHOOTER_SHOOT_POW.value;
-    }
-
-    protected double getShooterIdlePower() {
-        return Constants.SHOOTER_IDLE_POW.value;
+        telemetry.addData("leftShooterVelocity", shooterSubsystem.getLeftShooterVelocity());
+        telemetry.addData("rightShooterVelocity", shooterSubsystem.getRightShooterVelocity());
+        telemetry.addData("preShooterVelocity", shooterSubsystem.getPreShooterVelocity());
+        telemetry.addData("ascentVelocity", shooterSubsystem.getAscentVelocity());
     }
 
     protected double getShooterTargetVel() {
         return Constants.SHOOTER_TARGET_VEL.value;
-    }
-
-    protected double getTransferVel() {
-        return Constants.TRANSFER_VEL.value;
-    }
-
-    protected double getTransferPower() {
-        return Constants.TRANSFER_POW.value;
-    }
-
-    protected double getIntakePower() {
-        return Constants.INTAKE_PWR.value;
-    }
-
-    protected double getRetractPower() {
-        return Constants.RETRACT_PWR.value;
     }
 
     protected double getDriveSpeedMultiplier() {

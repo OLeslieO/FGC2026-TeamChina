@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.ShooterState;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.TransferState;
 
 @Config
 @TeleOp(name = "Shooter PIDF Test", group = "test")
@@ -36,27 +38,27 @@ public class ShooterPIDTest extends LinearOpMode {
             if (runShooter) {
                 shooterSubsystem.setShooterVelocity(shooterVelocity);
             } else {
-                shooterSubsystem.stopShooter();
+                shooterSubsystem.setShooterState(ShooterState.STOPPED);
             }
 
             if (runPreShooter) {
-                shooterSubsystem.preShooter.setVelocity(preShooterVelocity);
+                shooterSubsystem.setPreShooterVelocity(preShooterVelocity);
             } else {
-                shooterSubsystem.preShooter.setPower(0);
+                shooterSubsystem.setTransferState(TransferState.STOPPED);
             }
 
             telemetry.addData("Shooter target", shooterVelocity);
-            telemetry.addData("Shooter left velocity", shooterSubsystem.shooterLeft.getVelocity());
-            telemetry.addData("Shooter right velocity", shooterSubsystem.shooterRight.getVelocity());
+            telemetry.addData("Shooter left velocity", shooterSubsystem.getLeftShooterVelocity());
+            telemetry.addData("Shooter right velocity", shooterSubsystem.getRightShooterVelocity());
             telemetry.addData("Pre-shooter target", preShooterVelocity);
-            telemetry.addData("Pre-shooter velocity", shooterSubsystem.preShooter.getVelocity());
+            telemetry.addData("Pre-shooter velocity", shooterSubsystem.getPreShooterVelocity());
             telemetry.addData("Shooter PIDF", "P %.3f I %.3f D %.3f F %.3f",
                     shooterP, shooterI, shooterD, shooterF);
             telemetry.update();
             idle();
         }
 
-        shooterSubsystem.stopShooter();
-        shooterSubsystem.preShooter.setPower(0);
+        shooterSubsystem.setShooterState(ShooterState.STOPPED);
+        shooterSubsystem.setTransferState(TransferState.STOPPED);
     }
 }

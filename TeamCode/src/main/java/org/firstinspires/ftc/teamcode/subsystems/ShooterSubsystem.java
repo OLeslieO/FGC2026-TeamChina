@@ -7,9 +7,62 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import java.util.Objects;
+
 public class ShooterSubsystem extends SubsystemBase {
-    public final DcMotorEx shooterLeft, shooterRight, preShooter, ascentMotor;
-    public final Servo blender;
+    public enum ShooterState {
+        STOPPED(0.0),
+        IDLE(Constants.SHOOTER_IDLE_POW.value),
+        SHOOTING(Constants.SHOOTER_SHOOT_POW.value);
+
+        private final double power;
+
+        ShooterState(double power) {
+            this.power = power;
+        }
+
+        public double getPower() {
+            return power;
+        }
+    }
+
+    public enum TransferState {
+        STOPPED(0.0, false, 0.5),
+        ASCENDING(Constants.TRANSFER_POW.value, false, 0.5),
+        DESCENDING(-Constants.TRANSFER_POW.value, false, 0.5),
+        FEEDING(Constants.TRANSFER_VEL.value, true, 1.0);
+
+        private final double output;
+        private final boolean velocityControl;
+        private final double blenderPosition;
+
+        TransferState(double output, boolean velocityControl, double blenderPosition) {
+            this.output = output;
+            this.velocityControl = velocityControl;
+            this.blenderPosition = blenderPosition;
+        }
+
+        public double getOutput() {
+            return output;
+        }
+
+        public boolean usesVelocityControl() {
+            return velocityControl;
+        }
+
+        public double getBlenderPosition() {
+            return blenderPosition;
+        }
+    }
+
+    private final DcMotorEx shooterLeft;
+    private final DcMotorEx shooterRight;
+    private final DcMotorEx preShooter;
+    private final DcMotorEx ascentMotor;
+    private final Servo blender;
+    private ShooterState shooterState = ShooterState.STOPPED;
+    private TransferState transferState = TransferState.STOPPED;
+
     public ShooterSubsystem(HardwareMap hardwareMap) {
         shooterLeft = hardwareMap.get(DcMotorEx.class, "shooterLeft");
         shooterRight = hardwareMap.get(DcMotorEx.class, "shooterRight");
@@ -34,30 +87,76 @@ public class ShooterSubsystem extends SubsystemBase {
                 Constants.SHOOTER_PIDF_D.value,
                 Constants.SHOOTER_PIDF_F.value
         );
+        applyStates();
     }
 
-    public void accelerate(double power) {
-        shooterLeft.setPower(power);
-        shooterRight.setPower(power);
+    public void setShooterState(ShooterState shooterState) {
+        this.shooterState = Objects.requireNonNull(shooterState, "shooterState");
     }
-    public void idle(double power) {
-        shooterLeft.setPower(power);
-        shooterRight.setPower(power);
+
+    public ShooterState getShooterState() {
+        return shooterState;
     }
-    public void stopShooter() {
-        shooterLeft.setPower(0);
-        shooterRight.setPower(0);
-        shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+    public void setTransferState(TransferState transferState) {
+        this.transferState = Objects.requireNonNull(transferState, "transferState");
+    }
+
+    public TransferState getTransferState() {
+        return transferState;
+    }
+
+    public double getShooterPower() {
+        return shooterState.getPower();
+    }
+
+    public double getTransferOutput() {
+        return transferState.getOutput();
+    }
+
+    public double getBlenderPosition() {
+        return transferState.getBlenderPosition();
+    }
+
+    public double getLeftShooterVelocity() {
+        return shooterLeft.getVelocity();
+    }
+
+    public double getLeftShooterPower() {
+        return shooterLeft.getPower();
+    }
+
+    public double getRightShooterVelocity() {
+        return shooterRight.getVelocity();
+    }
+
+    public double getRightShooterPower() {
+        return shooterRight.getPower();
+    }
+
+    public double getPreShooterVelocity() {
+        return preShooter.getVelocity();
+    }
+
+    public double getPreShooterPower() {
+        return preShooter.getPower();
+    }
+
+    public double getAscentVelocity() {
+        return ascentMotor.getVelocity();
+    }
+
+    public double getAscentPower() {
+        return ascentMotor.getPower();
     }
 
     public void setShooterVelocity(double velocity) {
-        setShooterVelocity(velocity, velocity);
+        shooterLeft.setVelocity(velocity);
+        shooterRight.setVelocity(velocity);
     }
 
-    public void setShooterVelocity(double leftVelocity, double rightVelocity) {
-        shooterLeft.setVelocity(leftVelocity);
-        shooterRight.setVelocity(rightVelocity);
+    public void setPreShooterVelocity(double velocity) {
+        preShooter.setVelocity(velocity);
     }
 
     public void setShooterPIDF(double p, double i, double d, double f) {
@@ -65,41 +164,22 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterRight.setVelocityPIDFCoefficients(p, i, d, f);
     }
 
-    public void setTransferPower(double power) {
-        preShooter.setPower(power);
-        ascentMotor.setPower(power);
+    @Override
+    public void periodic() {
+        applyStates();
     }
 
-    public void setTransferVelocity(double velocity) {
-        preShooter.setVelocity(velocity);
-        ascentMotor.setVelocity(velocity);
-    }
+    private void applyStates() {
+        shooterLeft.setPower(shooterState.getPower());
+        shooterRight.setPower(shooterState.getPower());
 
-    public void setTransWithBlendPower(double power){
-        setTransferPower(power);
-        blender.setPosition(1);
-    }
-
-    public void setTransWithBlendVel(double velocity) {
-        setTransferVelocity(velocity);
-        blender.setPosition(1);
-    }
-
-    public void ascent(double power) {
-        setTransferPower(power);
-    }
-
-    public void descent(double power) {
-        setTransferPower(-power);
-    }
-
-    public void stopTransfer() {
-        setTransferVelocity(0);
-        setTransferPower(0);
-    }
-
-    public void stopShoot(){
-        stopTransfer();
-        blender.setPosition(0.5);
+        if (transferState.usesVelocityControl()) {
+            preShooter.setVelocity(transferState.getOutput());
+            ascentMotor.setVelocity(transferState.getOutput());
+        } else {
+            preShooter.setPower(transferState.getOutput());
+            ascentMotor.setPower(transferState.getOutput());
+        }
+        blender.setPosition(transferState.getBlenderPosition());
     }
 }

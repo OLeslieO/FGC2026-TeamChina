@@ -5,6 +5,11 @@ import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem.ExtensionState;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem.IntakeState;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.ShooterState;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.TransferState;
+
 @TeleOp(group = "0-competition", name = "TeleOp Dual")
 public class TeleOpDual extends TeleOpSolo {
 
@@ -19,62 +24,43 @@ public class TeleOpDual extends TeleOpSolo {
 
         // Gamepad 2 - Right Bumper
         if (gamepadEx2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
-            shooterSubsystem.accelerate(getShooterShootPower());
+            shooterSubsystem.setShooterState(ShooterState.SHOOTING);
         } else {
-            shooterSubsystem.stopShooter();
+            shooterSubsystem.setShooterState(ShooterState.STOPPED);
         }
 
         // Gamepad 1 - Right Trigger > 0.4
         if (gamepadEx1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.4) {
-            shooterSubsystem.setTransWithBlendVel(getTransferVel());
+            shooterSubsystem.setTransferState(TransferState.FEEDING);
+        } else if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP)) {
+            shooterSubsystem.setTransferState(TransferState.ASCENDING);
+        } else if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
+            shooterSubsystem.setTransferState(TransferState.DESCENDING);
         } else {
-            shooterSubsystem.stopShoot();
+            shooterSubsystem.setTransferState(TransferState.STOPPED);
         }
 
         // Gamepad 1 - Right Bumper
         if (gamepadEx1.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
-            intakeSubsystem.setIntakePower(getIntakePower());
-        }
-
-        // Gamepad 1 - Left Bumper
-        if (gamepadEx1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
-            intakeSubsystem.setIntakePower(-getIntakePower());
-        }
-
-        // Stop intake when neither bumper is pressed
-        if (!gamepadEx1.getButton(GamepadKeys.Button.RIGHT_BUMPER)
-                && !gamepadEx1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
-            intakeSubsystem.setIntakePower(0);
-        }
-
-        // Gamepad 1 - D-Pad Up
-        if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP)) {
-            shooterSubsystem.setTransferPower(getTransferPower());
-        }
-
-        // Gamepad 1 - D-Pad Down
-        if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
-            shooterSubsystem.setTransferPower(-getTransferPower());
-        }
-
-        // Stop transfer when neither D-Pad button is pressed
-        if (!gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP)
-                && !gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
-            shooterSubsystem.stopTransfer();
+            intakeSubsystem.setIntakeState(IntakeState.INTAKING);
+        } else if (gamepadEx1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
+            intakeSubsystem.setIntakeState(IntakeState.OUTTAKING);
+        } else {
+            intakeSubsystem.setIntakeState(IntakeState.STOPPED);
         }
 
         // Gamepad 2 - Left Stick Y > 0.5
         if (gamepadEx2.getLeftY() > 0.5) {
-            intakeSubsystem.setRetractPower(getRetractPower());
+            intakeSubsystem.setExtensionState(ExtensionState.EXTENDING);
         } else if (gamepadEx2.getLeftY() < -0.5) {
-            intakeSubsystem.setRetractPower(-getRetractPower());
-        }else {
-            intakeSubsystem.setRetractPower(0);
+            intakeSubsystem.setExtensionState(ExtensionState.RETRACTING);
+        } else {
+            intakeSubsystem.setExtensionState(ExtensionState.STOPPED);
         }
 
         // Shooter ready -> rumble
-        if (shooterSubsystem.shooterLeft.getVelocity() > getShooterTargetVel()
-                || shooterSubsystem.shooterRight.getVelocity() > getShooterTargetVel()) {
+        if (shooterSubsystem.getLeftShooterVelocity() > getShooterTargetVel()
+                || shooterSubsystem.getRightShooterVelocity() > getShooterTargetVel()) {
             gamepad1.rumble(3000);
             gamepad2.rumble(3000);
         }
@@ -89,4 +75,3 @@ public class TeleOpDual extends TeleOpSolo {
         CommandScheduler.getInstance().run();
     }
 }
-

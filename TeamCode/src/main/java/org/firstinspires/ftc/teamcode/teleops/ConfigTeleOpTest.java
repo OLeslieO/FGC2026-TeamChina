@@ -30,35 +30,6 @@ public class ConfigTeleOpTest extends TeleOpSolo {
     }
 
     @Override
-    protected double getShooterShootPower() {
-        return shooterShootPower;
-    }
-
-    @Override
-    protected double getShooterIdlePower() {
-        return shooterIdlePower;
-    }
-
-    @Override
-    protected double getTransferVel() {
-        return transferVel;
-    }
-    @Override
-    protected double getTransferPower() {
-        return transferPower;
-    }
-
-    @Override
-    protected double getIntakePower() {
-        return intakePower;
-    }
-
-    @Override
-    protected double getRetractPower() {
-        return laLaPower;
-    }
-
-    @Override
     protected double getDriveSpeedMultiplier() {
         return driveSpeedMultiplier;
     }
@@ -66,10 +37,10 @@ public class ConfigTeleOpTest extends TeleOpSolo {
     @Override
     protected void addTelemetry() {
         super.addTelemetry();
-        telemetry.addData("shooterLeftPower", shooterSubsystem.shooterLeft.getPower());
-        telemetry.addData("shooterRightPower", shooterSubsystem.shooterRight.getPower());
-        telemetry.addData("preShooterPower", shooterSubsystem.preShooter.getPower());
-        telemetry.addData("ascentPower", shooterSubsystem.ascentMotor.getPower());
+        telemetry.addData("shooterLeftPower", shooterSubsystem.getLeftShooterPower());
+        telemetry.addData("shooterRightPower", shooterSubsystem.getRightShooterPower());
+        telemetry.addData("preShooterPower", shooterSubsystem.getPreShooterPower());
+        telemetry.addData("ascentPower", shooterSubsystem.getAscentPower());
         telemetry.addData("configShooterShootPower", shooterShootPower);
         telemetry.addData("configShooterIdlePower", shooterIdlePower);
         telemetry.addData("configShooterPIDF", "P %.3f I %.3f D %.3f F %.3f",
