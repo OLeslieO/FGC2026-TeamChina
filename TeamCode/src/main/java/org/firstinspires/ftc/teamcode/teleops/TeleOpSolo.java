@@ -117,6 +117,10 @@ public class TeleOpSolo extends CommandOpmodeEx {
         return Constants.SHOOTER_SHOOT_POW.value;
     }
 
+    protected double getShooterShootVelocity(){
+        return Constants.SHOOTER_SHOOT_VEL.value;
+    }
+
     protected double getShooterIdlePower() {
         return Constants.SHOOTER_IDLE_POW.value;
     }

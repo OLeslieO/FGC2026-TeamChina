@@ -28,12 +28,12 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         preShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ascentMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        setShooterPIDF(
-//                Constants.SHOOTER_PIDF_P.value,
-//                Constants.SHOOTER_PIDF_I.value,
-//                Constants.SHOOTER_PIDF_D.value,
-//                Constants.SHOOTER_PIDF_F.value
-//        );
+        setShooterPIDF(
+                Constants.SHOOTER_PIDF_P.value,
+                Constants.SHOOTER_PIDF_I.value,
+                Constants.SHOOTER_PIDF_D.value,
+                Constants.SHOOTER_PIDF_F.value
+        );
     }
 
     public void accelerate(double power) {

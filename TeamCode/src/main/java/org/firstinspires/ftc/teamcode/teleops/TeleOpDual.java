@@ -19,20 +19,20 @@ public class TeleOpDual extends TeleOpSolo {
 
         // Gamepad 2 - Right Bumper
         if (gamepadEx2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
-            shooterSubsystem.accelerate(getShooterShootPower());
+            shooterSubsystem.setShooterVelocity(getShooterShootVelocity());
         } else {
-            shooterSubsystem.stopShooter();
+            shooterSubsystem.setShooterVelocity(700);
         }
 
         /* Gamepad 1 - Right Trigger > 0.4
-         * Gamepad 1 - D-Pad Up
+         * Gamepad 1 - D-Pad Up  mm
          * Gamepad 1 - D-Pad Down
          */
         if (gamepadEx1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.4) {
             shooterSubsystem.setTransWithBlendVel(getTransferVel());
-        } else if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP)) {
+        } else if (gamepadEx1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.4) {
             shooterSubsystem.setTransferPower(getTransferPower());
-        } else if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
+        } else if (gamepadEx2.getButton(GamepadKeys.Button.DPAD_DOWN)) {
             shooterSubsystem.setTransferPower(-getTransferPower());
         } else {
             shooterSubsystem.stopShoot();
@@ -74,6 +74,9 @@ public class TeleOpDual extends TeleOpSolo {
     @Override
     public void run() {
         telemetry.addData("Loop Times", elapsedtime.milliseconds());
+        telemetry.addData("shooterLMode", shooterSubsystem.shooterLeft.getMode());
+        telemetry.addData("shooterRMode", shooterSubsystem.shooterRight.getMode());
+
         telemetry.update();
         elapsedtime.reset();
 
