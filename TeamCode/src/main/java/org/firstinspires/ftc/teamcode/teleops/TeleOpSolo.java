@@ -125,8 +125,8 @@ public class TeleOpSolo extends CommandOpmodeEx {
         return Constants.SHOOTER_IDLE_POW.value;
     }
 
-    protected double getShooterTargetVel() {
-        return Constants.SHOOTER_TARGET_VEL.value;
+    protected double getRumbleTargetVel() {
+        return Constants.RUMBLE_TARGET_VEL.value;
     }
 
     protected double getTransferVel() {

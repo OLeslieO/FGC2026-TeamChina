@@ -64,8 +64,8 @@ public class TeleOpDual extends TeleOpSolo {
         }
 
         // Shooter ready -> rumble
-        if (shooterSubsystem.shooterLeft.getVelocity() > getShooterTargetVel()
-                || shooterSubsystem.shooterRight.getVelocity() > getShooterTargetVel()) {
+        if (shooterSubsystem.shooterLeft.getVelocity() > getRumbleTargetVel()
+                || shooterSubsystem.shooterRight.getVelocity() > getRumbleTargetVel()) {
             gamepad1.rumble(3);
             gamepad2.rumble(3);
         }

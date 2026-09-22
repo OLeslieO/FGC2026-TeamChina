@@ -12,14 +12,13 @@ import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 
 @Config
-@TeleOp(name = "Shooter PID Algorithm", group = "algorithms")
-public class ShooterPIDAlgorithm extends LinearOpMode {
+@TeleOp(name = "Shooter PID Test", group = "algorithms")
+public class ShooterPIDTest extends LinearOpMode {
     public static double shooterTargetVelocity = Constants.SHOOTER_SHOOT_VEL.value;
     public static double shooterIdleVelocity = 700;
-    public static double shooterP = 0.0007;
-    public static double shooterI = 0.0;
+    public static double shooterP = 0.0062;
+    public static double shooterI = 0.001;
     public static double shooterD = 0.00002;
-    public static double shooterF = 1.0 / Constants.SHOOTER_SHOOT_VEL.value;
     public static double transferVelocity = Constants.TRANSFER_VEL.value;
     public static double transferPower = Constants.TRANSFER_POW.value;
     public static double retractPower = Constants.RETRACT_PWR.value;
@@ -27,6 +26,7 @@ public class ShooterPIDAlgorithm extends LinearOpMode {
     private double integral;
     private double lastError;
     private double lastTargetVelocity = Double.NaN;
+    private MultipleTelemetry telemetryM;
 
     @Override
     public void runOpMode() {
@@ -34,15 +34,15 @@ public class ShooterPIDAlgorithm extends LinearOpMode {
         IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
         ElapsedTime loopTimer = new ElapsedTime();
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetry.addLine("PID shooter algorithm ready.");
-        telemetry.update();
+        telemetryM = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetryM.addLine("PID shooter algorithm ready.");
+        telemetryM.update();
 
         waitForStart();
         loopTimer.reset();
 
         while (opModeIsActive()) {
-            double targetVelocity = gamepad2.right_bumper ? shooterTargetVelocity : shooterIdleVelocity;
+            double targetVelocity = gamepad1.right_bumper ? shooterTargetVelocity : shooterIdleVelocity;
             resetOnTargetChange(targetVelocity);
             double currentVelocity = getAverageShooterVelocity(shooterSubsystem);
             double dt = Math.max(loopTimer.seconds(), 0.001);
@@ -53,8 +53,7 @@ public class ShooterPIDAlgorithm extends LinearOpMode {
             double derivative = (error - lastError) / dt;
             lastError = error;
 
-            double output = shooterF * targetVelocity
-                    + shooterP * error
+            double output = shooterP * error
                     + shooterI * integral
                     + shooterD * derivative;
             shooterSubsystem.accelerate(clipPower(output));
@@ -89,19 +88,15 @@ public class ShooterPIDAlgorithm extends LinearOpMode {
     private void runTransferBinding(ShooterSubsystem shooterSubsystem) {
         if (gamepad1.right_trigger > 0.4) {
             shooterSubsystem.setTransWithBlendVel(transferVelocity);
-        } else if (gamepad1.left_trigger > 0.4) {
-            shooterSubsystem.setTransferPower(transferPower);
-        } else if (gamepad2.dpad_down) {
-            shooterSubsystem.setTransferPower(-transferPower);
         } else {
             shooterSubsystem.stopShoot();
         }
     }
 
     private void runRetractBinding(IntakeSubsystem intakeSubsystem) {
-        if (gamepad2.left_stick_y > 0.5) {
+        if (gamepad1.left_stick_y > 0.5) {
             intakeSubsystem.setRetractPower(retractPower);
-        } else if (gamepad2.left_stick_y < -0.5) {
+        } else if (gamepad1.left_stick_y < -0.5) {
             intakeSubsystem.setRetractPower(-retractPower);
         } else {
             intakeSubsystem.setRetractPower(0);
@@ -110,13 +105,13 @@ public class ShooterPIDAlgorithm extends LinearOpMode {
 
     private void addTelemetry(ShooterSubsystem shooterSubsystem, String algorithm,
                               double targetVelocity, double output) {
-        telemetry.addData("Algorithm", algorithm);
-        telemetry.addData("Target velocity", targetVelocity);
-        telemetry.addData("Output power", output);
-        telemetry.addData("Left velocity", shooterSubsystem.shooterLeft.getVelocity());
-        telemetry.addData("Right velocity", shooterSubsystem.shooterRight.getVelocity());
-        telemetry.addData("Error", targetVelocity - getAverageShooterVelocity(shooterSubsystem));
-        telemetry.update();
+        telemetryM.addData("Algorithm", algorithm);
+        telemetryM.addData("Target velocity", targetVelocity);
+        telemetryM.addData("Output power", output);
+        telemetryM.addData("Left velocity", shooterSubsystem.shooterLeft.getVelocity());
+        telemetryM.addData("Right velocity", shooterSubsystem.shooterRight.getVelocity());
+        telemetryM.addData("Error", targetVelocity - getAverageShooterVelocity(shooterSubsystem));
+        telemetryM.update();
     }
 
     private double clipPower(double power) {
