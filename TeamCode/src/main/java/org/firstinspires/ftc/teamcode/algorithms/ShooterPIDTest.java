@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 @TeleOp(name = "Shooter PID Test", group = "algorithms")
 public class ShooterPIDTest extends LinearOpMode {
     public static double shooterTargetVelocity = Constants.SHOOTER_SHOOT_VEL.value;
-    public static double shooterIdleVelocity = 700;
+    public static double shooterIdleVelocity = 1000;
     public static double shooterP = 0.0062;
     public static double shooterI = 0.001;
     public static double shooterD = 0.00002;
@@ -27,6 +27,11 @@ public class ShooterPIDTest extends LinearOpMode {
     private double lastError;
     private double lastTargetVelocity = Double.NaN;
     private MultipleTelemetry telemetryM;
+    private boolean previousDpadDown;
+    private boolean recordingError;
+    private double errorSum;
+    private int errorSamples;
+    private double averageError = Double.NaN;
 
     @Override
     public void runOpMode() {
@@ -49,6 +54,7 @@ public class ShooterPIDTest extends LinearOpMode {
             loopTimer.reset();
 
             double error = targetVelocity - currentVelocity;
+            updateErrorRecording(error);
             integral += error * dt;
             double derivative = (error - lastError) / dt;
             lastError = error;
@@ -60,7 +66,7 @@ public class ShooterPIDTest extends LinearOpMode {
 
             runTransferBinding(shooterSubsystem);
             runRetractBinding(intakeSubsystem);
-            addTelemetry(shooterSubsystem, "PID", targetVelocity, output);
+            addTelemetry(shooterSubsystem, "PID", targetVelocity, output, error);
 
             idle();
         }
@@ -104,14 +110,38 @@ public class ShooterPIDTest extends LinearOpMode {
     }
 
     private void addTelemetry(ShooterSubsystem shooterSubsystem, String algorithm,
-                              double targetVelocity, double output) {
+                              double targetVelocity, double output, double error) {
         telemetryM.addData("Algorithm", algorithm);
         telemetryM.addData("Target velocity", targetVelocity);
         telemetryM.addData("Output power", output);
         telemetryM.addData("Left velocity", shooterSubsystem.shooterLeft.getVelocity());
         telemetryM.addData("Right velocity", shooterSubsystem.shooterRight.getVelocity());
-        telemetryM.addData("Error", targetVelocity - getAverageShooterVelocity(shooterSubsystem));
+        telemetryM.addData("Error", error);
+        telemetryM.addData("Error recording", recordingError ? "Recording" : "Stopped");
+        telemetryM.addData("Error samples", errorSamples);
+        telemetryM.addData("Average error", errorSamples == 0 ? "N/A" : averageError);
         telemetryM.update();
+    }
+
+    private void updateErrorRecording(double error) {
+        boolean dpadDownPressed = gamepad1.dpad_down && !previousDpadDown;
+        previousDpadDown = gamepad1.dpad_down;
+
+        if (dpadDownPressed) {
+            recordingError = !recordingError;
+            if (recordingError) {
+                errorSum = 0;
+                errorSamples = 0;
+                averageError = Double.NaN;
+            } else if (errorSamples > 0) {
+                averageError = errorSum / errorSamples;
+            }
+        }
+
+        if (recordingError) {
+            errorSum += error;
+            errorSamples++;
+        }
     }
 
     private double clipPower(double power) {

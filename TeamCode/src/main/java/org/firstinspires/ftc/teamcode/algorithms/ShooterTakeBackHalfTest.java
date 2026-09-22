@@ -14,10 +14,10 @@ import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 @TeleOp(name = "Shooter TBH Test", group = "algorithms")
 public class ShooterTakeBackHalfTest extends LinearOpMode {
     public static double shooterTargetVelocity = Constants.SHOOTER_SHOOT_VEL.value;
-    public static double shooterIdleVelocity = 700;
-    public static double gain = 0.00018;
-    public static double shootInitialGuess = 0.75;
-    public static double idleInitialGuess = 0.25;
+    public static double shooterIdleVelocity = 1000;
+    public static double gain = 0.02;
+    public static double shootInitialGuess = 0.85;
+    public static double idleInitialGuess = 0.4;
     public static double transferVelocity = Constants.TRANSFER_VEL.value;
     public static double transferPower = Constants.TRANSFER_POW.value;
     public static double retractPower = Constants.RETRACT_PWR.value;
@@ -27,6 +27,11 @@ public class ShooterTakeBackHalfTest extends LinearOpMode {
     private double lastError;
     private double lastTargetVelocity = Double.NaN;
     private MultipleTelemetry telemetryM;
+    private boolean previousDpadDown;
+    private boolean recordingError;
+    private double errorSum;
+    private int errorSamples;
+    private double averageError = Double.NaN;
 
     @Override
     public void runOpMode() {
@@ -45,6 +50,7 @@ public class ShooterTakeBackHalfTest extends LinearOpMode {
 
             double currentVelocity = getAverageShooterVelocity(shooterSubsystem);
             double error = targetVelocity - currentVelocity;
+            updateErrorRecording(error);
 
             output += gain * error;
             output = clipPower(output);
@@ -58,7 +64,7 @@ public class ShooterTakeBackHalfTest extends LinearOpMode {
             shooterSubsystem.accelerate(output);
             runTransferBinding(shooterSubsystem);
             runRetractBinding(intakeSubsystem);
-            addTelemetry(shooterSubsystem, targetVelocity, output, tbh);
+            addTelemetry(shooterSubsystem, targetVelocity, output, tbh, error);
 
             idle();
         }
@@ -107,15 +113,39 @@ public class ShooterTakeBackHalfTest extends LinearOpMode {
     }
 
     private void addTelemetry(ShooterSubsystem shooterSubsystem, double targetVelocity,
-                              double output, double tbh) {
+                              double output, double tbh, double error) {
         telemetryM.addData("Algorithm", "Take Back Half");
         telemetryM.addData("Target velocity", targetVelocity);
         telemetryM.addData("Output power", output);
         telemetryM.addData("TBH", tbh);
         telemetryM.addData("Left velocity", shooterSubsystem.shooterLeft.getVelocity());
         telemetryM.addData("Right velocity", shooterSubsystem.shooterRight.getVelocity());
-        telemetryM.addData("Error", targetVelocity - getAverageShooterVelocity(shooterSubsystem));
+        telemetryM.addData("Error", error);
+        telemetryM.addData("Error recording", recordingError ? "Recording" : "Stopped");
+        telemetryM.addData("Error samples", errorSamples);
+        telemetryM.addData("Average error", errorSamples == 0 ? "N/A" : averageError);
         telemetryM.update();
+    }
+
+    private void updateErrorRecording(double error) {
+        boolean dpadDownPressed = gamepad1.dpad_down && !previousDpadDown;
+        previousDpadDown = gamepad1.dpad_down;
+
+        if (dpadDownPressed) {
+            recordingError = !recordingError;
+            if (recordingError) {
+                errorSum = 0;
+                errorSamples = 0;
+                averageError = Double.NaN;
+            } else if (errorSamples > 0) {
+                averageError = errorSum / errorSamples;
+            }
+        }
+
+        if (recordingError) {
+            errorSum += error;
+            errorSamples++;
+        }
     }
 
     private double clipPower(double power) {
