@@ -4,11 +4,9 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
-import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
-import org.firstinspires.ftc.teamcode.ButtonEx;
 import org.firstinspires.ftc.teamcode.commands.DriveCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
@@ -65,33 +63,44 @@ public class TeleOpSolo extends CommandOpmodeEx {
 
     @Override
     public void functionalButtons() {
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.A))
-                .whenPressed(new InstantCommand(() -> shooterSubsystem.accelerate(getShooterShootPower())))
-                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopShooter()));
+        // Gamepad 1 - A
+        if (gamepadEx1.getButton(GamepadKeys.Button.A)) {
+            shooterSubsystem.accelerate(getShooterShootPower());
+        } else {
+            shooterSubsystem.stopShooter();
+        }
 
-        new ButtonEx(() -> gamepadEx1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.4)
-                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransWithBlendVel(getTransferVel())))
-                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopShoot()));
+        /* Gamepad 1 - Left Trigger > 0.4
+         * Gamepad 1 - D-Pad Up
+         * Gamepad 1 - D-Pad Down
+         */
+        if (gamepadEx1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.4) {
+            shooterSubsystem.setTransWithBlendVel(getTransferVel());
+        } else if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP)) {
+            shooterSubsystem.setTransferPower(getTransferPower());
+        } else if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
+            shooterSubsystem.setTransferPower(-getTransferPower());
+        } else {
+            shooterSubsystem.stopShoot();
+        }
 
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_BUMPER))
-                .whenPressed(new InstantCommand(() -> intakeSubsystem.setIntakePower(getIntakePower())))
-                .whenReleased(new InstantCommand(() -> intakeSubsystem.setIntakePower(0)));
+        // Gamepad 1 - Right Bumper
+        if (gamepadEx1.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+            intakeSubsystem.setIntakePower(getIntakePower());
+        } else {
+            intakeSubsystem.setIntakePower(0);
+        }
 
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_UP))
-                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(getTransferPower())))
-                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
-
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN))
-                .whenPressed(new InstantCommand(() -> shooterSubsystem.setTransferPower(-getTransferPower())))
-                .whenReleased(new InstantCommand(() -> shooterSubsystem.stopTransfer()));
-
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_LEFT))
-                .whenPressed(new InstantCommand(() -> intakeSubsystem.setRetractPower(getRetractPower())))
-                .whenReleased(new InstantCommand(() -> intakeSubsystem.setRetractPower(0)));
-
-        new ButtonEx(() -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_RIGHT))
-                .whenPressed(new InstantCommand(() -> intakeSubsystem.setRetractPower(-getRetractPower())))
-                .whenReleased(new InstantCommand(() -> intakeSubsystem.setRetractPower(0)));
+        /* Gamepad 1 - D-Pad Left
+         * Gamepad 1 - D-Pad Right
+         */
+        if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_LEFT)) {
+            intakeSubsystem.setRetractPower(getRetractPower());
+        } else if (gamepadEx1.getButton(GamepadKeys.Button.DPAD_RIGHT)) {
+            intakeSubsystem.setRetractPower(-getRetractPower());
+        } else {
+            intakeSubsystem.setRetractPower(0);
+        }
     }
 
     protected void initializeGamepads() {

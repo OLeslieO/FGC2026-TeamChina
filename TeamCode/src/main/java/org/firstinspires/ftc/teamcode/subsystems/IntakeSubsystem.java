@@ -17,7 +17,6 @@ public class IntakeSubsystem extends SubsystemBase {
         retract.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         retract.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         retract.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        retract.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void init(){
