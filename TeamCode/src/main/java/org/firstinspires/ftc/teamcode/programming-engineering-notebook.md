@@ -22,11 +22,25 @@ We tested three shooter control strategies:
 - Take Back Half control
 - Bang-bang control
 
-PID control uses proportional, integral, and derivative terms to reduce the error between the target velocity and the measured velocity. It is flexible and precise, but it requires careful tuning. Take Back Half control is also designed for feedback-based flywheel control; it adjusts the output and averages it when the velocity error crosses zero, helping the shooter settle near the correct power level. Bang-bang control is the simplest: it uses full power when the shooter is below the target range, then switches to a hold power. It responds quickly, but it can be less smooth because it switches between fixed output levels.
+For all three methods, the basic error is:
+
+`error = targetVelocity - currentVelocity`
+
+PID control uses proportional, integral, and derivative terms to reduce this error:
+
+`output = Kp * error + Ki * integral(error) + Kd * derivative(error)`
+
+It is flexible and precise, but it requires careful tuning. Take Back Half control is also designed for feedback-based flywheel control. It increases or decreases output based on the error, and when the error crosses zero, it averages the current output with the previous take-back-half value:
+
+`output = (output + tbh) / 2`
+
+Bang-bang control is the simplest method. It uses full power when the shooter is below the target range, then switches to a hold power:
+
+`output = fullPower if currentVelocity < targetVelocity - deadband`
+
+`output = holdPower otherwise`
 
 To compare these methods, we mainly used average error. Each shooter test file included an `updateErrorRecording` method that could start and stop error recording during a run. While recording, the program added the current velocity error to a running sum and counted the number of samples. When recording stopped, it calculated the average error by dividing the total error by the number of samples.
-
-This gave us a simple way to compare PID, Take Back Half, and bang-bang control using the same measurement. Instead of judging only by sound or by watching the shooter briefly, we could run each algorithm, record its average error, and use that data to decide which method stayed closest to the target velocity.
 
 ## Driver Feedback: Gamepad Rumble
 

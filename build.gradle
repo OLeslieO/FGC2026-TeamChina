@@ -21,6 +21,10 @@ allprojects {
     repositories {
         mavenCentral()
         google()
+        maven {
+            url = uri('https://oleslieo.github.io/ftc-shooter-autotune/maven/')
+            content { includeGroup 'io.github.oleslieo' }
+        }
     }
 }
 

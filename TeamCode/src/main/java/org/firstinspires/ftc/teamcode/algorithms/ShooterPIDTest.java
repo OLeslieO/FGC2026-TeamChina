@@ -20,7 +20,6 @@ public class ShooterPIDTest extends LinearOpMode {
     public static double shooterI = 0.001;
     public static double shooterD = 0.00002;
     public static double transferVelocity = Constants.TRANSFER_VEL.value;
-    public static double transferPower = Constants.TRANSFER_POW.value;
     public static double retractPower = Constants.RETRACT_PWR.value;
 
     private double integral;

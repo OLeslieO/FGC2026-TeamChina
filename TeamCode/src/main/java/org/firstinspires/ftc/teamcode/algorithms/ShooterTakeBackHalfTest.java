@@ -19,7 +19,6 @@ public class ShooterTakeBackHalfTest extends LinearOpMode {
     public static double shootInitialGuess = 0.85;
     public static double idleInitialGuess = 0.4;
     public static double transferVelocity = Constants.TRANSFER_VEL.value;
-    public static double transferPower = Constants.TRANSFER_POW.value;
     public static double retractPower = Constants.RETRACT_PWR.value;
 
     private double output;

@@ -10,7 +10,7 @@ public enum Constants {
     SHOOTER_PIDF_I(3.0),
     SHOOTER_PIDF_D(5),
     SHOOTER_PIDF_F(16),
-    TRANSFER_POW(0.8),
+    TRANSFER_POW(1.0),
     TRANSFER_VEL(1500),
     INTAKE_PWR(1.0),
     RETRACT_MIN_TICKS(0),

@@ -19,7 +19,6 @@ public class ShooterBangBangTest extends LinearOpMode {
     public static double holdPower = 0.5;
     public static double deadband = 40;
     public static double transferVelocity = Constants.TRANSFER_VEL.value;
-    public static double transferPower = Constants.TRANSFER_POW.value;
     public static double retractPower = Constants.RETRACT_PWR.value;
     private MultipleTelemetry telemetryM;
     private boolean previousDpadDown;

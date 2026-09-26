@@ -18,39 +18,33 @@ public class TeleOpDual extends TeleOpSolo {
     public void functionalButtons() {
 
         // Gamepad 2 - Right Bumper
-        if (gamepadEx2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+        if (gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.4) {
             shooterSubsystem.setShooterVelocity(getShooterShootVelocity());
         } else {
-            shooterSubsystem.setShooterVelocity(700);
+            shooterSubsystem.stopShooter();
         }
 
         /* Gamepad 1 - Right Trigger > 0.4
          * Gamepad 1 - D-Pad Up  mm
          * Gamepad 1 - D-Pad Down
          */
-        if (gamepadEx1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.4) {
+        if (gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.4) {
             shooterSubsystem.setTransWithBlendVel(getTransferVel());
-        } else if (gamepadEx1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.4) {
+        } else if (gamepadEx2.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
+            shooterSubsystem.setTransferVelocity(-getTransferVel());
+        } else if (gamepadEx1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.4) {
             shooterSubsystem.setTransferPower(getTransferPower());
-        } else if (gamepadEx2.getButton(GamepadKeys.Button.DPAD_DOWN)) {
-            shooterSubsystem.setTransferPower(-getTransferPower());
         } else {
             shooterSubsystem.stopShoot();
         }
 
         // Gamepad 1 - Right Bumper
+        // Gamepad 1 - Left Bumper
         if (gamepadEx1.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
             intakeSubsystem.setIntakePower(getIntakePower());
-        }
-
-        // Gamepad 1 - Left Bumper
-        if (gamepadEx1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
+        } else if (gamepadEx1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
             intakeSubsystem.setIntakePower(-getIntakePower());
-        }
-
-        // Stop intake when neither bumper is pressed
-        if (!gamepadEx1.getButton(GamepadKeys.Button.RIGHT_BUMPER)
-                && !gamepadEx1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
+        } else {
             intakeSubsystem.setIntakePower(0);
         }
 
@@ -59,15 +53,15 @@ public class TeleOpDual extends TeleOpSolo {
             intakeSubsystem.setRetractPower(getRetractPower());
         } else if (gamepadEx2.getLeftY() < -0.5) {
             intakeSubsystem.setRetractPower(-getRetractPower());
-        }else {
+        } else {
             intakeSubsystem.setRetractPower(0);
         }
 
         // Shooter ready -> rumble
         if (shooterSubsystem.shooterLeft.getVelocity() > getRumbleTargetVel()
                 || shooterSubsystem.shooterRight.getVelocity() > getRumbleTargetVel()) {
-            gamepad1.rumble(3);
-            gamepad2.rumble(3);
+            gamepad1.rumble(100);
+            gamepad2.rumble(100);
         }
     }
 

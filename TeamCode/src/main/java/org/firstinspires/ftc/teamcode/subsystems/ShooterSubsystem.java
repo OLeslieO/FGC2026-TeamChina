@@ -20,8 +20,8 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterRight.setDirection(DcMotorSimple.Direction.REVERSE);
         preShooter.setDirection(DcMotorSimple.Direction.FORWARD);
         ascentMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         preShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         ascentMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -83,14 +83,6 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setTransWithBlendVel(double velocity) {
         setTransferVelocity(velocity);
         blender.setPosition(1);
-    }
-
-    public void ascent(double power) {
-        setTransferPower(power);
-    }
-
-    public void descent(double power) {
-        setTransferPower(-power);
     }
 
     public void stopTransfer() {
