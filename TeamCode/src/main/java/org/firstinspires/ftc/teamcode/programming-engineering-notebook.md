@@ -47,3 +47,37 @@ To compare these methods, we mainly used average error. Each shooter test file i
 We added gamepad rumble as software feedback for the drivers. When the shooter velocity reaches the target range, the controller vibrates to tell the driver that the robot is ready to shoot.
 
 This helps the driver focus on the field instead of constantly watching telemetry. The rumble feedback turns sensor data into a simple physical signal, making the robot easier to operate during a match.
+
+
+## Open-source Automatic PIDF Tuning Library
+
+We developed a standalone **Shooter AutoTune library** to make shooter tuning repeatable. A webpage hosted on the Robot Controller lets us configure the hardware, monitor experiments, and export gains. 
+
+```text
+Unloaded power steps → Fit feedforward model → Validate at multiple speeds
+    → Test P → Test D if needed → Test I if needed
+    → Pause for loading → Driver-fed shot tests → Verify → Export constants
+```
+
+The tuner records voltage, velocity, and acceleration during six power steps. `FeedforwardTuner` uses least-squares fitting to estimate friction (`kS`), velocity (`kV`), and acceleration (`kA`) gains, rejecting models with an R² below 0.8. For forward shooter motion, `VelocityController` applies:
+
+```text
+error = targetVelocity - measuredVelocity
+feedforwardVolts = kS + kV * targetVelocity + kA * targetAcceleration
+commandVolts = feedforwardVolts + kP * error + kI * integral(error)
+               - kD * filteredMeasuredAcceleration
+motorPower = clamp(commandVolts / batteryVoltage, 0, 1)
+```
+
+Feedforward estimates the required voltage; PID corrects the remaining error. Dividing by measured battery voltage compensates for battery changes. The controller also limits integral buildup and filters the measured acceleration used by the derivative term.
+
+`PIDTuner` generates a small set of model-based candidates. It tests proportional gains first, derivative gains if the best response has more than **8% overshoot**, and integral gains if more than **2% steady-state error** remains. `PerformanceMetrics` scores candidates using:
+
+- **RMSE:** `sqrt(sum(error² * dt) / sum(dt))`, accounting for actual sample intervals without positive and negative errors canceling.
+- **Overshoot:** How far velocity passes beyond the target.
+- **Steady-state error:** Mean absolute error over the final 20% of the observation window.
+- **Recovery time:** Time to return within ±5% of the target, with at least 0.3 seconds continuously in range to confirm recovery.
+
+During loaded tests, we can feed each shot after the shooter stabilizes. The tuner compares nearby proportional gains, measures velocity drop and recovery, then verifies the selected gains with fresh shots. Only successful verification enables export of `kS`, `kV`, `kA`, `kP`, `kI`, and `kD`. These belong to the software controller and cannot be used directly as REV Hub velocity PIDF coefficients.
+
+`AutoTuneManager` coordinates these stages in the hardware-independent `tuner-core`; the FTC integration layer handles motors and the local webpage. This separation supports simulation testing, while Maven packaging allows reuse across projects.
