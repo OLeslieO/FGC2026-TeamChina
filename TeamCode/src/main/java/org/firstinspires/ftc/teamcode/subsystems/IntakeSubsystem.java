@@ -28,21 +28,6 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setRetractPower(double power) {
-        int position = retract.getCurrentPosition();
-
-        // 向下运动，并且已经到达下限
-        if (power < 0 && position <= Constants.RETRACT_MIN_TICKS.value) {
-            retract.setPower(0);
-            return;
-        }
-
-        // 向上运动，并且已经到达上限
-        if (power > 0 && position >= Constants.RETRACT_MAX_TICKS.value) {
-            retract.setPower(0);
-            return;
-        }
-
-        // 没有触碰限位，正常运行
         retract.setPower(power);
     }
 

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,10 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.subsystems.Constants;
-
-@TeleOp(name = "TeleOp 18", group = "0-competition")
-public class Teleop_18 extends LinearOpMode {
+@Disabled
+@TeleOp(name = "OnBotJava TeleOp", group = "0-competition")
+public class OnBotJavaTeleOp extends LinearOpMode {
     private DcMotorEx leftDrive, rightDrive;
     private DcMotorEx shooterLeft, shooterRight, preShooter, ascentMotor;
     private DcMotorEx intake, retract;
