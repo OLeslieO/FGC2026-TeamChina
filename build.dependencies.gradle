@@ -1,4 +1,5 @@
 repositories {
+    gradlePluginPortal()
     mavenCentral()
     google() // Needed for androidx
     maven { url = 'https://maven.brott.dev/' } //FTC Dashboard
@@ -15,6 +16,6 @@ dependencies {
     implementation 'org.firstinspires.ftc:Vision:12.0.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.6.0'//FTC Dashboard
-    implementation 'io.github.oleslieo:shooter-autotune:0.1.2'
+    implementation 'io.github.oleslieo:shooter-autotune:0.1.13'
 }
 

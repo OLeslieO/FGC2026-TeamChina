@@ -1,2 +1,7 @@
 include ':FtcRobotController'
 include ':TeamCode'
+// settings.gradle
+includeBuild('/Users/leslie/git/ftc-shooter-autotune') {
+    dependencySubstitution {
+        substitute module('io.github.oleslieo:shooter-autotune') using project(':ftc-library')    }
+}
