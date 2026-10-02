@@ -2,51 +2,25 @@
 
 ## Software Architecture: SolversLib Command-Based Structure
 
-Our robot code uses SolversLib's command-based structure to keep control logic organized. Instead of placing every motor action inside one large TeleOp file, we separated the robot into subsystems such as `DriveSubsystem`, `ShooterSubsystem`, and `IntakeSubsystem`, then used commands like `DriveCommand` to connect driver input to robot behavior.
-
-This makes the TeleOp code act more like a control layer, while each subsystem owns the hardware details for one mechanism. The result is code that is easier to test, tune, and update during build season.
-
-We also used inheritance with `TeleOpDual extends TeleOpSolo`. The dual-driver mode reuses the setup from the solo-driver mode and only changes the parts that need a second gamepad.
+Our robot code uses SolversLib's command-based structure to keep control logic organized. Rather than placing every motor action in one large TeleOp file, we separate the robot into subsystems such as `DriveSubsystem`, `ShooterSubsystem`, and `IntakeSubsystem`, while commands such as `DriveCommand` connect driver input to robot behavior. This keeps TeleOp as a control layer and lets each subsystem own its hardware details, making the code easier to test, tune, and update. We also use inheritance with `TeleOpDual extends TeleOpSolo`, so dual-driver mode reuses the solo-driver setup and only changes the controls needed for the second gamepad. `ConfigTeleOpTest` also extends `TeleOpSolo` and exposes shooter PIDF, mechanism power, and drive-speed settings for live adjustment through FTC Dashboard during testing.
 
 ![TeleOp inheritance structure](teleop-inheritance-structure.png)
 
 ## Shooter Velocity Control and Algorithm Testing
 
-One of the most important programming challenges was controlling the shooter. The shooter needs stable wheel speed to launch game pieces consistently. Using a fixed raw power, such as `1.0`, is simple, but it does not guarantee the same actual speed because battery voltage, friction, motor load, and feeding a game piece can all affect the shooter.
+The shooter needs stable wheel speed for consistent launches, so we used motor encoders to measure velocity and compare it with a target instead of relying on fixed motor power. For every method, the velocity error is `e = targetVelocity - currentVelocity`; PID calculates `output = Kp × e + Ki × ∫e dt + Kd × de/dt`, TBH updates `output = output + gain × e` and, when the error crosses zero, uses `output = (output + tbh) / 2`, while bang-bang uses `output = fullPower` when `currentVelocity < targetVelocity - deadband` and `holdPower` otherwise. Each test recorded error samples during a driver-selected interval and reported their average to compare how closely the methods held the target speed.
 
-To improve consistency, we used velocity-based shooter control with motor encoders. Encoders allow the program to measure the real shooter speed, compare it with a target velocity, and adjust motor output based on feedback. This is better than raw power because shooting accuracy depends on wheel speed, not just the power value being sent to the motors.
+| Algorithm | How it controls velocity | Advantages | Limitations |
+| --- | --- | --- | --- |
+| PID | Continuously corrects velocity error with proportional, integral, and derivative terms | Precise control and good steady-state accuracy | Requires careful gain tuning |
+| Take Back Half (TBH) | Adjusts output from error and averages output when error crosses zero | Simple flywheel feedback method with automatic correction after overshoot | Depends on a good initial output estimate and gain |
+| Bang-bang | Switches between full power and hold power around a velocity deadband | Very simple and quick to implement | Can oscillate around the target and offers less precise speed control |
 
-We tested three shooter control strategies:
-
-- PID control
-- Take Back Half control
-- Bang-bang control
-
-For all three methods, the basic error is:
-
-`error = targetVelocity - currentVelocity`
-
-PID control uses proportional, integral, and derivative terms to reduce this error:
-
-`output = Kp * error + Ki * integral(error) + Kd * derivative(error)`
-
-It is flexible and precise, but it requires careful tuning. Take Back Half control is also designed for feedback-based flywheel control. It increases or decreases output based on the error, and when the error crosses zero, it averages the current output with the previous take-back-half value:
-
-`output = (output + tbh) / 2`
-
-Bang-bang control is the simplest method. It uses full power when the shooter is below the target range, then switches to a hold power:
-
-`output = fullPower if currentVelocity < targetVelocity - deadband`
-
-`output = holdPower otherwise`
-
-To compare these methods, we mainly used average error. Each shooter test file included an `updateErrorRecording` method that could start and stop error recording during a run. While recording, the program added the current velocity error to a running sum and counted the number of samples. When recording stopped, it calculated the average error by dividing the total error by the number of samples.
+![Illustrative shooter-control and rumble-threshold comparison](shooter-control-rumble-threshold-comparison.svg)
 
 ## Driver Feedback: Gamepad Rumble
 
-We added gamepad rumble as software feedback for the drivers. When the shooter velocity reaches the target range, the controller vibrates to tell the driver that the robot is ready to shoot.
-
-This helps the driver focus on the field instead of constantly watching telemetry. The rumble feedback turns sensor data into a simple physical signal, making the robot easier to operate during a match.
+We added gamepad rumble as software feedback for the drivers. When the shooter velocity reaches the target range, the controller vibrates to tell the driver that the robot is ready to shoot. This lets the driver focus on the field instead of constantly watching telemetry, turning sensor data into a simple physical signal that makes the robot easier to operate during a match.
 
 ![Gamepad rumble velocity graph](gamepad-rumble-velocity-graph.svg)
 
@@ -76,3 +50,19 @@ Feedforward estimates the voltage; PID corrects the remainder, with integral cla
 During loaded tests, the driver feeds shots once the shooter stabilizes; the tuner compares nearby gains, measures recovery, and verifies the chosen gains before exporting constants。
 
 `AutoTuneManager` coordinates these stages in the`tuner-core`, letting the integration layer own motors/webpage and enabling simulation testing and Maven reuse across projects.
+
+## Intake Retraction Restriction: Sensor Selection
+
+The intake must stop retracting reliably at its home position. Without a position restriction, the motor can continue pulling after the intake is fully retracted, which can strain the mechanism and make the starting position inconsistent.
+
+After evaluating the available options, we selected a magnetic limit switch. A magnet mounted on the moving intake triggers the switch at the retracted position, allowing the program to stop the motor and reset its reference position.
+
+| Sensor choice | Advantages | Disadvantages |
+| --- | --- | --- |
+| Motor internal encoder | No additional sensor hardware; provides continuous position data | Position can become inaccurate from slip, load, or missed motion |
+| Touch sensor | Simple direct end-stop detection; easy to program | Repeated physical contact can reduce durability |
+| Magnetic limit switch | Non-contact detection; reliable and durable for repeated retraction cycles | Requires accurate magnet/switch alignment and an added magnet |
+
+## Vision: AprilTag Detection on Suppression Units
+
+We use a Logitech C270 UVC USB Camera to locate the AprilTags mounted on the **SUPPRESSION UNITS**. The camera streams frames to the robot-control software, where an AprilTag processor detects each visible tag and reports its ID and position relative to the robot. This gives the robot a field reference that can be used to identify the correct suppression unit and support more accurate autonomous alignment.

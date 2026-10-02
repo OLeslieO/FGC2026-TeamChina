@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620" role="img" aria-labelledby="title desc">
+  <title id="title">Illustrative shooter velocity response comparison</title>
+  <desc id="desc">A conceptual graph comparing PID, Take Back Half, and bang-bang shooter velocity responses to the same target velocity.</desc>
+  <style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #18181b; }
+    .title { font-size: 27px; font-weight: 700; }.label { font-size: 15px; font-weight: 600; fill: #3f3f46; }.tick, .note { font-size: 13px; fill: #52525b; }
+    .grid { stroke: #d4d4d8; stroke-width: 1; }.axis { stroke: #27272a; stroke-width: 2; }.target { fill: none; stroke: #52525b; stroke-width: 3; stroke-dasharray: 10 7; }
+    .pid { fill: none; stroke: #2563eb; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }.tbh { fill: none; stroke: #16a34a; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }.bang { fill: none; stroke: #dc2626; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }.legend { font-size: 14px; }
+  </style>
+  <rect width="1000" height="620" fill="#fff"/>
+  <text x="500" y="42" class="title" text-anchor="middle">Illustrative Shooter-Control Response Comparison</text>
+  <text x="500" y="66" class="note" text-anchor="middle">Conceptual behavior only; actual results depend on tuning, load, and battery voltage.</text>
+  <g class="grid">
+    <line x1="95" y1="100" x2="95" y2="510"/><line x1="270" y1="100" x2="270" y2="510"/><line x1="445" y1="100" x2="445" y2="510"/><line x1="620" y1="100" x2="620" y2="510"/><line x1="795" y1="100" x2="795" y2="510"/><line x1="930" y1="100" x2="930" y2="510"/>
+    <line x1="95" y1="510" x2="930" y2="510"/><line x1="95" y1="428" x2="930" y2="428"/><line x1="95" y1="346" x2="930" y2="346"/><line x1="95" y1="264" x2="930" y2="264"/><line x1="95" y1="182" x2="930" y2="182"/><line x1="95" y1="100" x2="930" y2="100"/>
+  </g>
+  <line x1="95" y1="510" x2="930" y2="510" class="axis"/><line x1="95" y1="100" x2="95" y2="510" class="axis"/>
+  <path d="M95 182 H930" class="target"/>
+  <path d="M95 510 C155 465,205 330,260 245 S350 177,410 181 S490 184,930 182" class="pid"/>
+  <path d="M95 510 C155 440,210 290,270 200 S330 155,382 190 S440 178,495 183 S560 181,930 182" class="tbh"/>
+  <path d="M95 510 L195 290 L245 160 L315 205 L380 165 L450 205 L520 165 L590 205 L660 165 L730 205 L800 165 L870 205 L930 175" class="bang"/>
+  <text x="500" y="575" class="label" text-anchor="middle">Time after target command</text><text x="25" y="305" class="label" text-anchor="middle" transform="rotate(-90 25 305)">Shooter velocity</text>
+  <text x="80" y="514" class="tick" text-anchor="end">0</text><text x="80" y="186" class="tick" text-anchor="end">Target</text>
+  <text x="95" y="536" class="tick" text-anchor="middle">0 s</text><text x="270" y="536" class="tick" text-anchor="middle">1 s</text><text x="445" y="536" class="tick" text-anchor="middle">2 s</text><text x="620" y="536" class="tick" text-anchor="middle">3 s</text><text x="795" y="536" class="tick" text-anchor="middle">4 s</text>
+  <g transform="translate(650 275)"><rect x="-18" y="-22" width="276" height="142" rx="4" fill="#fff" stroke="#e4e4e7"/><line x1="0" y1="0" x2="35" y2="0" class="target"/><text x="48" y="5" class="legend">Target velocity</text><line x1="0" y1="30" x2="35" y2="30" class="pid"/><text x="48" y="35" class="legend">PID: settles smoothly</text><line x1="0" y1="60" x2="35" y2="60" class="tbh"/><text x="48" y="65" class="legend">TBH: corrects after crossover</text><line x1="0" y1="90" x2="35" y2="90" class="bang"/><text x="48" y="95" class="legend">Bang-bang: oscillates in deadband</text></g>
+</svg>
