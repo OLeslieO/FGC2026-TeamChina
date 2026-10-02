@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620" role="img" aria-labelledby="title desc">
+    <title id="title">Driver Feedback: Gamepad Rumble</title>
+    <desc id="desc">Line graph comparing actual shooter velocity against target velocity, with a horizontal threshold showing where gamepad rumble begins.</desc>
+    <style>
+        text { font-family: Arial, Helvetica, sans-serif; fill: #18181b; }
+        .title { font-size: 28px; font-weight: 700; }
+        .axis-label { font-size: 15px; font-weight: 600; fill: #3f3f46; }
+        .tick { font-size: 13px; fill: #52525b; }
+        .grid { stroke: #d4d4d8; stroke-width: 1; opacity: 0.85; }
+        .axis { stroke: #27272a; stroke-width: 2; }
+        .actual { fill: none; stroke: #2563eb; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+        .target { fill: none; stroke: #dc2626; stroke-width: 3.5; stroke-dasharray: 12 9; stroke-linecap: round; stroke-linejoin: round; }
+        .rumble-threshold { fill: none; stroke: #16a34a; stroke-width: 3; stroke-dasharray: 10 7; }
+        .annotation { font-size: 16px; font-weight: 700; fill: #166534; }
+        .annotation-small { font-size: 13px; fill: #166534; }
+        .legend-text { font-size: 14px; fill: #27272a; }
+    </style>
+
+    <rect x="0" y="0" width="1000" height="620" fill="#ffffff" />
+    <text x="500.0" y="42" class="title" text-anchor="middle">Driver Feedback: Gamepad Rumble</text>
+
+    <line x1="86.0" y1="78" x2="86.0" y2="538" class="grid" /><text x="86.0" y="578" class="tick" text-anchor="middle">0.0</text><line x1="231.7" y1="78" x2="231.7" y2="538" class="grid" /><text x="231.7" y="578" class="tick" text-anchor="middle">1.3</text><line x1="377.3" y1="78" x2="377.3" y2="538" class="grid" /><text x="377.3" y="578" class="tick" text-anchor="middle">2.7</text><line x1="523.0" y1="78" x2="523.0" y2="538" class="grid" /><text x="523.0" y="578" class="tick" text-anchor="middle">4.0</text><line x1="668.7" y1="78" x2="668.7" y2="538" class="grid" /><text x="668.7" y="578" class="tick" text-anchor="middle">5.3</text><line x1="814.3" y1="78" x2="814.3" y2="538" class="grid" /><text x="814.3" y="578" class="tick" text-anchor="middle">6.7</text><line x1="960.0" y1="78" x2="960.0" y2="538" class="grid" /><text x="960.0" y="578" class="tick" text-anchor="middle">8.0</text><line x1="86" y1="538.0" x2="960" y2="538.0" class="grid" /><text x="72" y="543.0" class="tick" text-anchor="end">0</text><line x1="86" y1="446.0" x2="960" y2="446.0" class="grid" /><text x="72" y="451.0" class="tick" text-anchor="end">406</text><line x1="86" y1="354.0" x2="960" y2="354.0" class="grid" /><text x="72" y="359.0" class="tick" text-anchor="end">811</text><line x1="86" y1="262.0" x2="960" y2="262.0" class="grid" /><text x="72" y="267.0" class="tick" text-anchor="end">1217</text><line x1="86" y1="170.0" x2="960" y2="170.0" class="grid" /><text x="72" y="175.0" class="tick" text-anchor="end">1622</text><line x1="86" y1="78.0" x2="960" y2="78.0" class="grid" /><text x="72" y="83.0" class="tick" text-anchor="end">2028</text>
+
+    <line x1="86" y1="538" x2="960" y2="538" class="axis" />
+    <line x1="86" y1="78" x2="86" y2="538" class="axis" />
+
+    <polyline points="86.0,531.5 96.9,474.0 107.8,432.9 118.8,399.4 129.7,377.6 140.6,352.6 151.6,337.0 162.5,323.6 173.4,309.6 184.3,290.4 195.2,259.5 206.2,234.1 217.1,208.0 228.0,190.9 239.0,171.4 249.9,155.6 260.8,150.4 271.7,150.0 282.6,157.7 293.6,155.6 304.5,155.7 315.4,153.7 326.4,154.1 337.3,153.4 348.2,144.0 359.1,140.5 370.1,136.9 381.0,143.8 391.9,145.8 402.8,144.7 413.8,144.3 424.7,143.1 435.6,148.2 446.5,142.8 457.5,138.2 468.4,131.0 479.3,130.7 490.2,134.4 501.2,131.8 512.1,132.1 523.0,128.6 533.9,135.3 544.9,138.2 555.8,139.6 566.7,143.3 577.6,154.3 588.6,178.2 599.5,185.0 610.4,173.7 621.3,145.8 632.2,127.9 643.2,123.6 654.1,120.9 665.0,121.6 676.0,116.6 686.9,122.0 697.8,126.1 708.7,129.6 719.7,128.3 730.6,123.8 741.5,128.4 752.4,129.5 763.4,133.3 774.3,128.4 785.2,127.1 796.1,130.2 807.1,132.1 818.0,134.5 828.9,127.3 839.8,128.0 850.8,128.5 861.7,132.4 872.6,131.8 883.5,126.3 894.5,128.1 905.4,128.5 916.3,134.4 927.2,130.6 938.2,127.9 949.1,127.9 960.0,129.8" class="actual" />
+    <polyline points="86.0,129.7 96.9,129.7 107.8,129.7 118.8,129.7 129.7,129.7 140.6,129.7 151.6,129.7 162.5,129.7 173.4,129.7 184.3,129.7 195.2,129.7 206.2,129.7 217.1,129.7 228.0,129.7 239.0,129.7 249.9,129.7 260.8,129.7 271.7,129.7 282.6,129.7 293.6,129.7 304.5,129.7 315.4,129.7 326.4,129.7 337.3,129.7 348.2,129.7 359.1,129.7 370.1,129.7 381.0,129.7 391.9,129.7 402.8,129.7 413.8,129.7 424.7,129.7 435.6,129.7 446.5,129.7 457.5,129.7 468.4,129.7 479.3,129.7 490.2,129.7 501.2,129.7 512.1,129.7 523.0,129.7 533.9,129.7 544.9,129.7 555.8,129.7 566.7,129.7 577.6,129.7 588.6,129.7 599.5,129.7 610.4,129.7 621.3,129.7 632.2,129.7 643.2,129.7 654.1,129.7 665.0,129.7 676.0,129.7 686.9,129.7 697.8,129.7 708.7,129.7 719.7,129.7 730.6,129.7 741.5,129.7 752.4,129.7 763.4,129.7 774.3,129.7 785.2,129.7 796.1,129.7 807.1,129.7 818.0,129.7 828.9,129.7 839.8,129.7 850.8,129.7 861.7,129.7 872.6,129.7 883.5,129.7 894.5,129.7 905.4,129.7 916.3,129.7 927.2,129.7 938.2,129.7 949.1,129.7 960.0,129.7" class="target" />
+    <line x1="86" y1="220.4" x2="960" y2="220.4" class="rumble-threshold" />
+    <text x="948" y="208.4" class="annotation" text-anchor="end">Rumble starts at 1400 ticks/s</text>
+
+    <text x="500.0" y="606" class="axis-label" text-anchor="middle">Time (seconds)</text>
+    <text x="22" y="310.0" class="axis-label" transform="rotate(-90 22 310.0)" text-anchor="middle">Shooter velocity (ticks/second)</text>
+
+    <g transform="translate(708, 466)">
+        <rect x="-18" y="-20" width="274" height="104" fill="#ffffff" stroke="#e4e4e7" />
+        <line x1="0" y1="0" x2="38" y2="0" class="actual" />
+        <text x="50" y="5" class="legend-text">Actual velocity</text>
+        <line x1="0" y1="30" x2="38" y2="30" class="target" />
+        <text x="50" y="35" class="legend-text">Target velocity</text>
+        <line x1="0" y1="62" x2="38" y2="62" class="rumble-threshold" />
+        <text x="50" y="66" class="legend-text">Rumble threshold</text>
+    </g>
+</svg>

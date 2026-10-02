@@ -1,58 +1,40 @@
 package org.firstinspires.ftc.teamcode.algorithms;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 
 @Config
 @TeleOp(name = "Shooter PID Test", group = "algorithms")
-public class ShooterPIDTest extends LinearOpMode {
+public class ShooterPIDTest extends ShooterTestBase {
     public static double shooterTargetVelocity = Constants.SHOOTER_SHOOT_VEL.value;
     public static double shooterIdleVelocity = 1000;
-    public static double shooterP = 0.0062;
-    public static double shooterI = 0.001;
-    public static double shooterD = 0.00002;
+    public static double shooterP = 0.12;
+    public static double shooterI = 0.008;
+    public static double shooterD = 0.0;
     public static double transferVelocity = Constants.TRANSFER_VEL.value;
-    public static double retractPower = Constants.RETRACT_PWR.value;
 
     private double integral;
     private double lastError;
     private double lastTargetVelocity = Double.NaN;
-    private MultipleTelemetry telemetryM;
-    private boolean previousDpadDown;
-    private boolean recordingError;
-    private double errorSum;
-    private int errorSamples;
-    private double averageError = Double.NaN;
-
     @Override
     public void runOpMode() {
-        ShooterSubsystem shooterSubsystem = new ShooterSubsystem(hardwareMap);
-        IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
         ElapsedTime loopTimer = new ElapsedTime();
-
-        telemetryM = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetryM.addLine("PID shooter algorithm ready.");
-        telemetryM.update();
+        initializeShooterTest("PID shooter algorithm ready.");
 
         waitForStart();
         loopTimer.reset();
 
         while (opModeIsActive()) {
-            double targetVelocity = gamepad1.right_bumper ? shooterTargetVelocity : shooterIdleVelocity;
+            double targetVelocity = gamepad1.right_trigger_pressed ? shooterTargetVelocity : shooterIdleVelocity;
             resetOnTargetChange(targetVelocity);
-            double currentVelocity = getAverageShooterVelocity(shooterSubsystem);
+            double currentVelocity = getAverageShooterVelocity();
             double dt = Math.max(loopTimer.seconds(), 0.001);
             loopTimer.reset();
 
-            double error = targetVelocity - currentVelocity;
+            double error = (targetVelocity - currentVelocity) / 20;
             updateErrorRecording(error);
             integral += error * dt;
             double derivative = (error - lastError) / dt;
@@ -61,23 +43,17 @@ public class ShooterPIDTest extends LinearOpMode {
             double output = shooterP * error
                     + shooterI * integral
                     + shooterD * derivative;
-            shooterSubsystem.accelerate(clipPower(output));
+            shooterSubsystem.accelerate(clipPower(output, -1.0));
 
-            runTransferBinding(shooterSubsystem);
-            runRetractBinding(intakeSubsystem);
-            addTelemetry(shooterSubsystem, "PID", targetVelocity, output, error);
+            runTransferBinding(transferVelocity);
+            runRetractBinding();
+            addCommonTelemetry("PID", targetVelocity, clipPower(output, -1.0), error);
+            telemetryM.update();
 
             idle();
         }
 
-        shooterSubsystem.stopShooter();
-        shooterSubsystem.stopShoot();
-        intakeSubsystem.setRetractPower(0);
-    }
-
-    private double getAverageShooterVelocity(ShooterSubsystem shooterSubsystem) {
-        return (shooterSubsystem.shooterLeft.getVelocity()
-                + shooterSubsystem.shooterRight.getVelocity()) / 2.0;
+        stopShooterTest();
     }
 
     private void resetOnTargetChange(double targetVelocity) {
@@ -90,60 +66,4 @@ public class ShooterPIDTest extends LinearOpMode {
         lastTargetVelocity = targetVelocity;
     }
 
-    private void runTransferBinding(ShooterSubsystem shooterSubsystem) {
-        if (gamepad1.right_trigger > 0.4) {
-            shooterSubsystem.setTransWithBlendVel(transferVelocity);
-        } else {
-            shooterSubsystem.stopShoot();
-        }
-    }
-
-    private void runRetractBinding(IntakeSubsystem intakeSubsystem) {
-        if (gamepad1.left_stick_y > 0.5) {
-            intakeSubsystem.setRetractPower(retractPower);
-        } else if (gamepad1.left_stick_y < -0.5) {
-            intakeSubsystem.setRetractPower(-retractPower);
-        } else {
-            intakeSubsystem.setRetractPower(0);
-        }
-    }
-
-    private void addTelemetry(ShooterSubsystem shooterSubsystem, String algorithm,
-                              double targetVelocity, double output, double error) {
-        telemetryM.addData("Algorithm", algorithm);
-        telemetryM.addData("Target velocity", targetVelocity);
-        telemetryM.addData("Output power", output);
-        telemetryM.addData("Left velocity", shooterSubsystem.shooterLeft.getVelocity());
-        telemetryM.addData("Right velocity", shooterSubsystem.shooterRight.getVelocity());
-        telemetryM.addData("Error", error);
-        telemetryM.addData("Error recording", recordingError ? "Recording" : "Stopped");
-        telemetryM.addData("Error samples", errorSamples);
-        telemetryM.addData("Average error", errorSamples == 0 ? "N/A" : averageError);
-        telemetryM.update();
-    }
-
-    private void updateErrorRecording(double error) {
-        boolean dpadDownPressed = gamepad1.dpad_down && !previousDpadDown;
-        previousDpadDown = gamepad1.dpad_down;
-
-        if (dpadDownPressed) {
-            recordingError = !recordingError;
-            if (recordingError) {
-                errorSum = 0;
-                errorSamples = 0;
-                averageError = Double.NaN;
-            } else if (errorSamples > 0) {
-                averageError = errorSum / errorSamples;
-            }
-        }
-
-        if (recordingError) {
-            errorSum += error;
-            errorSamples++;
-        }
-    }
-
-    private double clipPower(double power) {
-        return Math.max(0.0, Math.min(1.0, power));
-    }
 }

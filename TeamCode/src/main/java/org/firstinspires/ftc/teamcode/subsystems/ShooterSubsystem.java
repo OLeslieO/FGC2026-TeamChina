@@ -19,7 +19,7 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         shooterRight.setDirection(DcMotorSimple.Direction.REVERSE);
         preShooter.setDirection(DcMotorSimple.Direction.FORWARD);
-        ascentMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        ascentMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         preShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

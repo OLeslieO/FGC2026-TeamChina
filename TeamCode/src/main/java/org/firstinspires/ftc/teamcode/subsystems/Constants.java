@@ -13,8 +13,6 @@ public enum Constants {
     TRANSFER_POW(1.0),
     TRANSFER_VEL(1500),
     INTAKE_PWR(1.0),
-    RETRACT_MIN_TICKS(0),
-    RETRACT_MAX_TICKS(676),
     RETRACT_PWR(1.0);
 
     public final double value;

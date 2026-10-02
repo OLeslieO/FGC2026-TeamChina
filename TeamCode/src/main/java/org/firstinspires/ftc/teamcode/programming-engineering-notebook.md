@@ -48,6 +48,8 @@ We added gamepad rumble as software feedback for the drivers. When the shooter v
 
 This helps the driver focus on the field instead of constantly watching telemetry. The rumble feedback turns sensor data into a simple physical signal, making the robot easier to operate during a match.
 
+![Gamepad rumble velocity graph](gamepad-rumble-velocity-graph.svg)
+
 
 ## Open-source Automatic PIDF Tuning Library
 
