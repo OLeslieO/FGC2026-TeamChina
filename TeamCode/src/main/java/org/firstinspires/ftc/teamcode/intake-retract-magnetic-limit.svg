@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#B5473A"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5F7F72"/>
+    </marker>
+  </defs>
+
+  <rect width="1400" height="900" fill="#F7F1DC"/>
+
+  <text x="700" y="52" text-anchor="middle" font-size="30" font-weight="bold" fill="#222">INTAKE RETRACTION LIMIT: MAGNETIC LIMIT SWITCH</text>
+  <text x="700" y="82" text-anchor="middle" font-size="16" fill="#555">Mechanism (left) and the matching control logic in the OpMode loop (right)</text>
+
+  <text x="330" y="125" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">1. Mechanism</text>
+
+  <rect x="100" y="150" width="30" height="520" fill="#8A8A8A" rx="4"/>
+  <rect x="130" y="150" width="400" height="14" fill="#8A8A8A"/>
+  <text x="60" y="415" text-anchor="middle" font-size="13" fill="#555" transform="rotate(-90 60 415)">robot frame</text>
+
+  <circle cx="330" cy="200" r="38" fill="#444"/>
+  <circle cx="330" cy="200" r="14" fill="#CCC"/>
+  <text x="330" y="258" text-anchor="middle" font-size="14" font-weight="bold" fill="#222">retract motor</text>
+  <text x="330" y="276" text-anchor="middle" font-size="12" fill="#555">retract.setPower(retractPower)</text>
+
+  <line x1="330" y1="238" x2="330" y2="500" stroke="#777" stroke-width="4" stroke-dasharray="8 6"/>
+
+  <rect x="150" y="300" width="70" height="36" rx="6" fill="#5F7F72"/>
+  <text x="185" y="323" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFF">switch</text>
+  <line x1="130" y1="318" x2="150" y2="318" stroke="#5F7F72" stroke-width="6"/>
+  <text x="185" y="290" text-anchor="middle" font-size="12" fill="#333">magnetic limit switch</text>
+  <text x="185" y="356" text-anchor="middle" font-size="11" fill="#555">(fixed, retractLimit)</text>
+  <path d="M222,306 q14,12 0,24" stroke="#5F7F72" stroke-width="2" fill="none"/>
+  <path d="M230,300 q22,18 0,36" stroke="#5F7F72" stroke-width="2" fill="none" opacity="0.6"/>
+  <path d="M238,294 q30,24 0,48" stroke="#5F7F72" stroke-width="2" fill="none" opacity="0.35"/>
+
+  <line x1="240" y1="318" x2="530" y2="318" stroke="#5F7F72" stroke-width="2" stroke-dasharray="4 4"/>
+  <text x="535" y="322" font-size="12" fill="#5F7F72">HOME (retracted)</text>
+
+  <rect x="245" y="296" width="170" height="44" rx="6" fill="#5F7F72" opacity="0.18" stroke="#5F7F72" stroke-dasharray="4 3"/>
+  <rect x="249" y="306" width="14" height="24" rx="2" fill="#B5473A" opacity="0.35"/>
+  <text x="330" y="323" text-anchor="middle" font-size="12" fill="#5F7F72">intake at home -&gt; switch triggered</text>
+
+  <rect x="245" y="478" width="170" height="44" rx="6" fill="#D9C8A0" stroke="#333" stroke-width="2"/>
+  <text x="340" y="505" text-anchor="middle" font-size="14" font-weight="bold" fill="#222">intake (LaLa)</text>
+  <rect x="249" y="488" width="14" height="24" rx="2" fill="#B5473A"/>
+  <text x="256" y="540" text-anchor="middle" font-size="12" fill="#B5473A">magnet</text>
+  <text x="256" y="554" text-anchor="middle" font-size="11" fill="#B5473A">(moves with intake)</text>
+
+  <circle cx="470" cy="560" r="26" fill="#444"/>
+  <circle cx="470" cy="560" r="10" fill="#CCC"/>
+  <rect x="405" y="520" width="20" height="40" fill="#D9C8A0" stroke="#333" stroke-width="2"/>
+  <line x1="415" y1="560" x2="444" y2="560" stroke="#333" stroke-width="3"/>
+
+  <line x1="600" y1="470" x2="600" y2="350" stroke="#5F7F72" stroke-width="5" marker-end="url(#arrowGreen)"/>
+  <text x="615" y="400" font-size="14" fill="#5F7F72" font-weight="bold">retractPower &gt; 0</text>
+  <text x="615" y="418" font-size="12" fill="#5F7F72">UP / toward switch (left_stick_y &lt; 0)</text>
+
+  <line x1="600" y1="540" x2="600" y2="650" stroke="#B5473A" stroke-width="5" marker-end="url(#arrowRed)"/>
+  <text x="615" y="590" font-size="14" fill="#B5473A" font-weight="bold">retractPower &lt; 0</text>
+  <text x="615" y="608" font-size="12" fill="#B5473A">DOWN / away from switch (left_stick_y &gt; 0)</text>
+  <text x="615" y="626" font-size="12" fill="#B5473A">blocked when switch is triggered</text>
+
+  <line x1="100" y1="690" x2="700" y2="690" stroke="#8A8A8A" stroke-width="3"/>
+
+  <text x="1070" y="125" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">2. Control logic (every loop)</text>
+
+  <rect x="860" y="150" width="420" height="78" rx="10" fill="#FFF" stroke="#333" stroke-width="2"/>
+  <text x="1070" y="180" text-anchor="middle" font-size="14" fill="#555">Read sensor</text>
+  <text x="1070" y="206" text-anchor="middle" font-size="13.5" font-family="Menlo, monospace" fill="#222">retractLimitTriggered = retractLimit.isPressed();</text>
+
+  <line x1="1070" y1="228" x2="1070" y2="268" stroke="#333" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <rect x="860" y="270" width="420" height="78" rx="10" fill="#FFF" stroke="#333" stroke-width="2"/>
+  <text x="1070" y="300" text-anchor="middle" font-size="14" fill="#555">Driver input</text>
+  <text x="1070" y="326" text-anchor="middle" font-size="15" font-family="Menlo, monospace" fill="#222">retractPower = -left_stick_y;</text>
+
+  <line x1="1070" y1="348" x2="1070" y2="392" stroke="#333" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <polygon points="1070,395 1290,480 1070,565 850,480" fill="#FFF" stroke="#333" stroke-width="2"/>
+  <text x="1070" y="470" text-anchor="middle" font-size="15" font-family="Menlo, monospace" fill="#222">retractLimitTriggered</text>
+  <text x="1070" y="492" text-anchor="middle" font-size="15" font-family="Menlo, monospace" fill="#222">&amp;&amp; retractPower &lt; 0 ?</text>
+
+  <line x1="1290" y1="480" x2="1350" y2="480" stroke="#B5473A" stroke-width="3"/>
+  <line x1="1350" y1="480" x2="1350" y2="630" stroke="#B5473A" stroke-width="3"/>
+  <line x1="1350" y1="630" x2="1292" y2="630" stroke="#B5473A" stroke-width="3" marker-end="url(#arrowRed)"/>
+  <text x="1320" y="470" text-anchor="middle" font-size="14" font-weight="bold" fill="#B5473A">YES</text>
+
+  <rect x="1130" y="600" width="160" height="60" rx="10" fill="#B5473A"/>
+  <text x="1210" y="625" text-anchor="middle" font-size="13" fill="#FFF">block downward motion</text>
+  <text x="1210" y="647" text-anchor="middle" font-size="15" font-family="Menlo, monospace" fill="#FFF">retractPower = 0;</text>
+
+  <line x1="1070" y1="565" x2="1070" y2="690" stroke="#5F7F72" stroke-width="3"/>
+  <text x="1050" y="590" text-anchor="end" font-size="14" font-weight="bold" fill="#5F7F72">NO</text>
+  <text x="1050" y="608" text-anchor="end" font-size="12" fill="#5F7F72">(not at limit, or moving UP)</text>
+  <text x="1050" y="624" text-anchor="end" font-size="12" fill="#5F7F72">power passes through unchanged</text>
+
+  <line x1="1210" y1="660" x2="1210" y2="690" stroke="#B5473A" stroke-width="3"/>
+  <line x1="1210" y1="690" x2="1070" y2="690" stroke="#333" stroke-width="3"/>
+  <line x1="1070" y1="690" x2="1070" y2="728" stroke="#333" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <rect x="860" y="730" width="420" height="70" rx="10" fill="#333"/>
+  <text x="1070" y="757" text-anchor="middle" font-size="14" fill="#CCC">Apply to motor</text>
+  <text x="1070" y="782" text-anchor="middle" font-size="15" font-family="Menlo, monospace" fill="#FFF">retract.setPower(retractPower);</text>
+
+  <path d="M220,318 C 420,230 700,170 858,189" stroke="#5F7F72" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#arrowGreen)"/>
+  <text x="560" y="205" text-anchor="middle" font-size="12" fill="#5F7F72">magnet reaches switch -&gt; isPressed() == true</text>
+
+  <rect x="100" y="720" width="640" height="130" rx="10" fill="#FFF" stroke="#333" stroke-width="1.5"/>
+  <text x="120" y="748" font-size="15" font-weight="bold" fill="#222">Why a magnetic switch</text>
+  <text x="120" y="774" font-size="13" fill="#333">- Non-contact: the magnet passes near the switch, nothing is physically pressed, so it survives repeated cycles.</text>
+  <text x="120" y="796" font-size="13" fill="#333">- Absolute reference: unlike the motor encoder, it cannot drift from slip or load, so HOME is always the same spot.</text>
+  <text x="120" y="818" font-size="13" fill="#333">- One-directional block: only power that drives INTO the switch is zeroed, so the driver can always back away.</text>
+  <text x="120" y="840" font-size="13" fill="#777">Cost: magnet and switch must be aligned so the field reliably trips the sensor at the home position.</text>
+</svg>
