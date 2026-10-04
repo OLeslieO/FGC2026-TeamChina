@@ -14,6 +14,7 @@ public class Xdrive extends LinearOpMode {
     private DcMotorEx frontRight;
     private DcMotorEx backLeft;
     private DcMotorEx backRight;
+    private DcMotorEx ascent;
 
     private IMU imu;
 
@@ -30,6 +31,7 @@ public class Xdrive extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
         backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        ascent = hardwareMap.get(DcMotorEx.class,"ascent");
 
         // 根据你的实际电机安装方向修改
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -42,6 +44,7 @@ public class Xdrive extends LinearOpMode {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ascent.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         imu = hardwareMap.get(IMU.class, "imu");
 
@@ -87,7 +90,7 @@ public class Xdrive extends LinearOpMode {
             double y = -gamepad1.left_stick_y;
 
             // Rotation
-            double rx = gamepad1.right_stick_x;
+            double rx = -gamepad1.right_stick_x;
 
             // =========================
             // Field Centric Transformation
@@ -160,6 +163,15 @@ public class Xdrive extends LinearOpMode {
             frontRight.setPower(frontRightPower * speedMultiplier);
             backLeft.setPower(backLeftPower * speedMultiplier);
             backRight.setPower(backRightPower * speedMultiplier);
+
+            if(gamepad1.right_bumper){
+                ascent.setPower(1);
+            } else if (gamepad1.left_bumper) {
+                ascent.setPower(-1);
+
+            }else {
+                ascent.setPower(0);
+            }
 
             // =========================
             // Telemetry
