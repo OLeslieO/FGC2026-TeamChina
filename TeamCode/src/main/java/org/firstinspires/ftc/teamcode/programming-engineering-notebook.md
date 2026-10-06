@@ -4,7 +4,7 @@
 
 Our robot code uses SolversLib's command-based structure to keep control logic organized. Rather than placing every motor action in one large TeleOp file, we separate the robot into subsystems such as `DriveSubsystem`, `ShooterSubsystem`, and `IntakeSubsystem`, while commands such as `DriveCommand` connect driver input to robot behavior. This keeps TeleOp as a control layer and lets each subsystem own its hardware details, making the code easier to test, tune, and update. We also use inheritance with `TeleOpDual extends TeleOpSolo`, so dual-driver mode reuses the solo-driver setup and only changes the controls needed for the second gamepad. `ConfigTeleOpTest` also extends `TeleOpSolo` and exposes shooter PIDF, mechanism power, and drive-speed settings for live adjustment through FTC Dashboard during testing.
 
-![TeleOp inheritance structure](teleop-inheritance-structure.png)
+![TeleOp inheritance structure](images/teleop-inheritance-structure.png)
 
 ## Shooter Velocity Control and Algorithm Testing
 
@@ -16,13 +16,11 @@ The shooter needs stable wheel speed for consistent launches, so we used motor e
 | Take Back Half (TBH) | Adjusts output from error and averages output when error crosses zero | Simple flywheel feedback method with automatic correction after overshoot | Depends on a good initial output estimate and gain |
 | Bang-bang | Switches between full power and hold power around a velocity deadband | Very simple and quick to implement | Can oscillate around the target and offers less precise speed control |
 
-![Illustrative shooter-control and rumble-threshold comparison](shooter-control-rumble-threshold-comparison.svg)
-
 ## Driver Feedback: Gamepad Rumble
 
 We added gamepad rumble as software feedback for the drivers. When the shooter velocity reaches the target range, the controller vibrates to tell the driver that the robot is ready to shoot. This lets the driver focus on the field instead of constantly watching telemetry, turning sensor data into a simple physical signal that makes the robot easier to operate during a match.
 
-![Gamepad rumble velocity graph](gamepad-rumble-velocity-graph.svg)
+![Shooter-control and rumble-threshold comparison](images/shooter-control-rumble-threshold-comparison.svg)
 
 ## Open-source Automatic PIDF Tuning Library
 
